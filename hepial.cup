@@ -8,40 +8,45 @@ action code {:
     
 :}
 
-terminal PRG, STARTPRG, ENDPRG, CONSTANT, SEMICOLON, STARTFUNC, ENDFUNC, OPENPARENT;
-terminal CLOSEPARENT, COMMA, EQUAL, DOUBLEPOINTS, OPENBRACK, CLOSEBRACK;
-terminal READ, WRITE, RETURN, IF, THEN, ELSE, ENDIF, WHILE, DO, ENDWHILE;
+
+terminal PRG, STARTPRG, ENDPRG, SEMICOLON, /*STARTFUNC, ENDFUNC,*/ OPENPARENT;
+terminal CLOSEPARENT, COMMA, EQUAL; /*DOUBLEPOINTS, OPENBRACK, CLOSEBRACK;*/
+terminal READ, WRITE, /*RETURN,*/ IF, THEN, ELSE, ENDIF, WHILE, DO, ENDWHILE;
 terminal FOR, FROM, TO, ENDFOR, TRUE, FALSE,  PLUS, MINUS, TIMES, DIVIDE;
 terminal EQUALS, DIFF, INF, INFEQUAL, SUP, SUPEQUAL, AND, OR, TILDA, NOT;
 
-terminal String IDENT, STRINGCONST, TINTEGER, TBOOLEAN;
+terminal String IDENT, STRINGCONST, TINTEGER, TBOOLEAN, CONSTANT;
 terminal int INTEGERCONST;
 
 // Non terminal rules that return a RESULT value
-non terminal DeclarationProgramme program, header;
-non terminal Bloc declar_lst, body;
-non terminal ArrayList<Instruction> instr_lst, declars, declar, declar_var;
-non terminal declar_const;
+non terminal ProgramDeclaration program, header;
+non terminal Block declar_lst, body;
+non terminal ArrayList<Instruction> instr_lst, declars;
+non terminal Instruction declar;
+non terminal DeclarVar declar_var;
+non terminal DeclarConst declar_const;
 non terminal Expression expr, access, operand;
-non terminal for_instr;
-non terminal while_instr;
-non terminal return_instr;
-non terminal cond_instr;
-non terminal write_instr;
-non terminal read_instr;
+non terminal Instruction for_instr;
+non terminal Instruction while_instr;
+//non terminal Instruction return_instr;
+non terminal Instruction cond_instr;
+non terminal Instruction write_instr;
+non terminal Instruction read_instr;
 non terminal Instruction instr;
-non terminal Affectation assign;
-non terminal index;
-non terminal op_una;
-non terminal Binaire op_bin;
+non terminal Assignment assign;
+//non terminal index; // aucun index dans le fichier
+non terminal Unary op_una;
+non terminal Binary op_bin;
 
-non terminal l_ident;
-non terminal type;
-non terminal typebase;
+non terminal ArrayList<Idf> l_ident;
+non terminal String type;
+non terminal String typebase;
+
+
 
 // Precedences
 precedence left PLUS, MINUS, TIMES, DIVIDE, EQUALS, DIFF;
-precedence left INF, SUP, INFEQUAL, SUPEQUAL, AND, OR, DOUBLEPOINTS;
+precedence left INF, SUP, INFEQUAL, SUPEQUAL, AND, OR;
 precedence right TILDA, NOT;
 
 program           ::= header:p declar_lst STARTPRG body:instructions ENDPRG
@@ -55,25 +60,27 @@ header            ::= PRG IDENT:id {: RESULT = new DeclarationProgramme(new Idf(
 
 declar_lst        ::=  declars:d {: RESULT = new Bloc(d, "", dleft, dright); :};
 
-declars           ::= {: RESULT= new ArrayList(); :}
-                      | declars:ds declar:d {: ds.add(d); RESULT = ds;:};
+declars           ::= {: RESULT = new ArrayList(); :}
+                      | declars:ds declar:d {:  ds.add(d); 
+                                                RESULT = ds;:};
 
 declar            ::= declar_var:dv {: RESULT = dv; :}
                       | declar_const:dc {: RESULT = dc; :};
 
-declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVariable(t.toString(), l, "", sleft, sright);:};
+declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVariable(t, l, "", sleft, sright);:};
+
+declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {: RESULT = new DeclarConst(t, new Idf(i, "", ileft, iright), ex, "", sright, sleft); :};
 
 l_ident           ::= IDENT:i {: ArrayList<Idf> lst = new ArrayList<>(); 
                                   lst.add(new Idf(i, "", ileft, iright)); 
                                   RESULT = lst; :}
-                      | l_ident:l COMMA IDENT:i {: l.add(new Idf(i, "", ileft, iright)); RESULT = i; :};
+                      | l_ident:l COMMA IDENT:i {: l.add(new Idf(i, "", ileft, iright)); RESULT = l; :};
 
 type              ::= typebase:t {: RESULT = t;  :};
 
 typebase          ::= TINTEGER {: RESULT = "integer";  :}
                       | TBOOLEAN {: RESULT = "boolean";  :};
                       
-declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {: RESULT = new DeclarConst(t.toString(), new Idf(i, "", ileft, iright), ex, "", sright, sleft); :};
 
 
 
@@ -143,4 +150,4 @@ read_instr        ::= READ IDENT:i SEMICOLON:s   {: RESULT = new Lire(new Idf(i,
 cond_instr        ::= IF:o expr:e THEN body:b ELSE body:b2 ENDIF {: RESULT = new SiAlorsSinon(e, b.getInstructions(), b2.getInstructions(), "", oleft, oright);:}
                       | IF:o expr:e THEN body:b ENDIF {: RESULT = new SiAlors(e, b.getInstructions(), "", oleft, oright);  :};
 while_instr       ::= WHILE:o expr:e DO body:lstInstr ENDWHILE {: RESULT = new TantQue(e, lstInstr.getInstructions(), "", oleft, oright);   :};
-for_instr         ::= FOR:o IDENT:id FROM expr:brnInf TO expr:brnSup DO body:lstInstr ENDFOR {: RESULT = new Pour( new Idf(id, "", idleft, idright), brnInf, brnSup, lstInstr.getInstructions(), "", oleft, oright); :};
+for_instr         ::= FOR:f IDENT:id FROM expr:brnInf TO expr:brnSup DO body:lstInstr ENDFOR {: RESULT = new Pour( new Idf(id, "", idleft, idright), brnInf, brnSup, lstInstr.getInstructions(), "", fleft, fright); :};
