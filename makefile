@@ -3,7 +3,7 @@ JAVACUP=java-cup-11a.jar
 CLASSPATH=$(JAVACUP):./src
 
 all : test.txt sym.class parser.class HepialLexer.class Hepialc.class
-	java -classpath $(JAVACUP):./java:. Hepialc test.txt
+	java -classpath $(JAVACUP):./src:. Hepialc test.txt
 
 HepialLexer.java : hepial.flex
 	jflex hepial.flex
