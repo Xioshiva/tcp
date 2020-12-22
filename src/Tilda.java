@@ -1,4 +1,4 @@
-public class Tilda extends Unaire{
+public class Tilda extends Unary{
     
     public Tilda(String fl, int line, int col) {
         super(fl, line, col);

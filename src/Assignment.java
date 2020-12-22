@@ -2,7 +2,7 @@
  * Represent an assignment node inside the AST.
  */
 
-public class Affectation extends Instruction {
+public class Assignment extends Instruction {
     /**
      * The source operand (at its right)
      */
@@ -15,7 +15,7 @@ public class Affectation extends Instruction {
     /**
      * Constructor
      */
-    public Affectation(Expression dest, Expression src, String fl, int line, int col) {
+    public Assignment(Expression dest, Expression src, String fl, int line, int col) {
         super(fl, line, col);
         this.lierSource(src);
         this.lierDestination(dest);

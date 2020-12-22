@@ -1,7 +1,7 @@
-public class Unaire extends Expression{
+public class Unary extends Expression{
     private Expression expr;
 
-    public Unaire(String fl, int line, int col) {
+    public Unary(String fl, int line, int col) {
         super(fl, line, col);
     }
 

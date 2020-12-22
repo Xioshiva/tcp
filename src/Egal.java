@@ -15,7 +15,7 @@ public class Egal extends Relation {
 
     @Override 
     public String toString(){
-        this.operateur();
+        return this.operateur();
     }
 
     public int apply(int left, int right){

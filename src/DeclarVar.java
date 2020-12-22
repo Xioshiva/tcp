@@ -1,11 +1,11 @@
 import java.util.*;
 
-public class DeclarVariable  extends Instruction{
+public class DeclarVar  extends Instruction{
 
     private String type;
     private ArrayList<Idf> idfs;
 
-    public DeclarVariable(String type, ArrayList<Idf> idfs, String fl, int line, int col){
+    public DeclarVar(String type, ArrayList<Idf> idfs, String fl, int line, int col){
         super(fl, line, col);
         this.type = type;
         this.idfs = idfs;

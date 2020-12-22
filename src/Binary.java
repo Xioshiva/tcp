@@ -1,5 +1,5 @@
 
-public abstract class Binaire extends Expression {
+public abstract class Binary extends Expression {
     /**
      * The expression at its left
      */
@@ -12,7 +12,7 @@ public abstract class Binaire extends Expression {
     /**
      * Constructor
      */
-    public Binaire(String fl, int line, int col) {
+    public Binary(String fl, int line, int col) {
         super(fl, line, col);
     }
 

@@ -2,8 +2,8 @@ JFLEX=jflex
 JAVACUP=java-cup-11a.jar
 CLASSPATH=$(JAVACUP):./src
 
-all : test.txt sym.class parser.class HepialLexer.class hepialc.class
-	java -classpath $(JAVACUP):./java:. hepialc input.txt
+all : test.txt sym.class parser.class HepialLexer.class Hepialc.class
+	java -classpath $(JAVACUP):./java:. Hepialc test.txt
 
 HepialLexer.java : hepial.flex
 	jflex hepial.flex

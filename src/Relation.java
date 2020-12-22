@@ -2,7 +2,7 @@
  * Base class that represent a binary relational expression node inside the AST.
  */
 
-public abstract class Relation extends Binaire {
+public abstract class Relation extends Binary {
     /**
      * Constructor
      */

@@ -1,4 +1,8 @@
-lol issou
-nice try
-int lol = 7
-
+programme SecondTest
+entier n;
+entier result;
+debutprg
+    pour n allantde 0 a 20 faire
+		result = result + n;
+	finpour
+finprg

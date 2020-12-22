@@ -1,5 +1,3 @@
-import java.util.*;
-
 public class DeclarConst  extends Instruction{
 
     private String type;

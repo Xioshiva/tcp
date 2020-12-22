@@ -1,4 +1,4 @@
-public class Non extends Unaire{
+public class Non extends Unary{
     
     public Non(String fl, int line, int col) {
         super(fl, line, col);

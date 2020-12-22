@@ -768,14 +768,14 @@ public void yyerror() {
             } 
             // fall through
           case 57: break;
-          case 8: 
+          /*case 8: 
             { return new Symbol(sym.OPENBRACK, yyline, yycolumn);
-            } 
+            } */
             // fall through
           case 58: break;
-          case 9: 
+          /*case 9: 
             { return new Symbol(sym.CLOSEBRACK, yyline, yycolumn);
-            } 
+            } */
             // fall through
           case 59: break;
           case 10: 
@@ -833,9 +833,9 @@ public void yyerror() {
             } 
             // fall through
           case 70: break;
-          case 21: 
+          /*case 21: 
             { return new Symbol(sym.DOUBLEPOINTS, yyline, yycolumn);
-            } 
+            } */
             // fall through
           case 71: break;
           case 22: 
@@ -943,14 +943,14 @@ public void yyerror() {
             } 
             // fall through
           case 92: break;
-          case 43: 
+          /*case 43: 
             { return new Symbol(sym.ENDFUNC, yyline, yycolumn);
-            } 
+            } */
             // fall through
           case 93: break;
-          case 44: 
+          /*case 44: 
             { return new Symbol(sym.RETURN, yyline, yycolumn);
-            } 
+            } */
             // fall through
           case 94: break;
           case 45: 
@@ -968,9 +968,9 @@ public void yyerror() {
             } 
             // fall through
           case 97: break;
-          case 48: 
+          /*case 48: 
             { return new Symbol(sym.STARTFUNC, yyline, yycolumn);
-            } 
+            } */
             // fall through
           case 98: break;
           case 49: 

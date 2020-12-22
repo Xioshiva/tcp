@@ -54,11 +54,11 @@ program           ::= header:p declar_lst STARTPRG body:instructions ENDPRG
                         System.out.println("ok, c'est good !!!!"); 
                         RESULT = p;
                     :};
-header            ::= PRG IDENT:id {: RESULT = new DeclarationProgramme(new Idf(id, "", idleft, idright), "", idleft, idright); :};
+header            ::= PRG IDENT:id {: RESULT = new ProgramDeclaration(new Idf(id, "", idleft, idright), "", idleft, idright); :};
 
 
 
-declar_lst        ::=  declars:d {: RESULT = new Bloc(d, "", dleft, dright); :};
+declar_lst        ::=  declars:d {: RESULT = new Block(d, "", dleft, dright); :};
 
 declars           ::= {: RESULT = new ArrayList(); :}
                       | declars:ds declar:d {:  ds.add(d); 
@@ -67,7 +67,7 @@ declars           ::= {: RESULT = new ArrayList(); :}
 declar            ::= declar_var:dv {: RESULT = dv; :}
                       | declar_const:dc {: RESULT = dc; :};
 
-declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVariable(t, l, "", sleft, sright);:};
+declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVar(t, l, "", sleft, sright);:};
 
 declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {: RESULT = new DeclarConst(t, new Idf(i, "", ileft, iright), ex, "", sright, sleft); :};
 
@@ -123,7 +123,7 @@ operand           ::= access:access       {: RESULT = access; :}
 
 
 access            ::= IDENT:i   {: RESULT = new Idf(i, "", ileft, iright); :};
-body              ::= instr_lst:i {: RESULT = new Bloc(i, "", ileft, iright); :};
+body              ::= instr_lst:i {: RESULT = new Block(i, "", ileft, iright); :};
 
 instr_lst         ::= {: RESULT = new ArrayList(); :}
                       | instr_lst:il instr:i
@@ -138,7 +138,7 @@ instr             ::= assign:inst        {: RESULT = inst;  :}
                       | cond_instr:inst  {:  RESULT = inst; :}
                       | while_instr:inst {:  RESULT = inst;  :}
                       | for_instr:inst   {:  RESULT = inst;  :};
-assign            ::= access:a EQUAL:e expr:expr SEMICOLON:s {: RESULT = new Affectation(a, expr, "", sleft, sright); :};
+assign            ::= access:a EQUAL:e expr:expr SEMICOLON:s {: RESULT = new Assignment(a, expr, "", sleft, sright); :};
 
 
 write_instr       ::= WRITE expr:e SEMICOLON:s {: RESULT = new Ecrire(e, "", sleft, sright); :}

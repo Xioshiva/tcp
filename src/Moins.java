@@ -1,4 +1,4 @@
-public class Moins extends Unaire{
+public class Moins extends Unary{
     
     public Moins(String fl, int line, int col) {
         super(fl, line, col);

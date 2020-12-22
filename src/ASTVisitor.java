@@ -2,16 +2,16 @@
  * AST visiteur interface
 */
 
-import java.util.*;
 
 public interface ASTVisitor {
     Object visit(Addition node);
-    Object visit(Affectation node);
-    Object visit(Bloc node);
+    Object visit(Assignment node);
+    Object visit(Block node);
     Object visit(SiAlors node);
     Object visit(SiAlorsSinon node);
     Object visit(DeclarConst node);
-    Object visit(DeclarVariable node);
+    Object visit(DeclarVar node);
+    Object visit(ProgramDeclaration node);
     Object visit(Different node);
     Object visit(Division node);
     Object visit(Ecrire node);
@@ -35,7 +35,7 @@ public interface ASTVisitor {
     Object visit(TantQue node);
     Object visit(Tilda node);
     Object visit(Vrai node);
-    Object visit(Unaire node);
+    Object visit(Unary node);
 
 }
 

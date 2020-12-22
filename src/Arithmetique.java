@@ -1,4 +1,4 @@
-public abstract class Arithmetique extends Binaire {
+public abstract class Arithmetique extends Binary {
     /**
      * Constructor
      */

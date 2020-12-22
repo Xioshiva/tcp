@@ -2,7 +2,7 @@
  * Represent a function declaration instruction node inside the AST.
 */
 
-public class DeclarationProgramme extends Instruction {
+public class ProgramDeclaration extends Instruction {
     /**
      * The declared variable identifier
      */
@@ -10,16 +10,16 @@ public class DeclarationProgramme extends Instruction {
     /**
      * The declaration section of the function (list of DeclarationVariable)
      */
-    protected Bloc declarations;
+    protected Block declarations;
     /**
      * The body of the function
      */
-    protected Bloc instructions;
+    protected Block instructions;
 
     /**
      * Constructor
      */
-    public DeclarationProgramme(Idf identifier, String fl, int line, int col){
+    public ProgramDeclaration(Idf identifier, String fl, int line, int col){
         super(fl, line, col);
         this.identifier = identifier;
     }
@@ -33,13 +33,13 @@ public class DeclarationProgramme extends Instruction {
     /**
      * Get the declaration section of the function
      */
-    public Bloc getDeclaration() {
+    public Block getDeclaration() {
         return this.declarations;
     }
     /**
      * Get the body of the function
      */
-    public Bloc getInstructions() {
+    public Block getInstructions() {
         return this.instructions;
     }
 
@@ -52,13 +52,13 @@ public class DeclarationProgramme extends Instruction {
     /**
      * Set the declarations section of the function
      */
-    public void setDeclarations(Bloc declarations) {
+    public void setDeclarations(Block declarations) {
         this.declarations = declarations;
     }
     /**
      * Set the body of the function
      */
-    public void setInstructions(Bloc instructions) {
+    public void setInstructions(Block instructions) {
         this.instructions = instructions;
     }
 

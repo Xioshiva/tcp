@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Bloc extends Instruction {
+public class Block extends Instruction {
 
     /**
      * The list of instructions
@@ -10,14 +10,14 @@ public class Bloc extends Instruction {
     /**
      * Constructor with provided list
      */
-    public Bloc(ArrayList<Instruction> instructions, String fl, int line, int col) {
+    public Block(ArrayList<Instruction> instructions, String fl, int line, int col) {
         super(fl, line, col);
         this.setInstructions(instructions);
     }
     /**
      * Empty constructor
      */
-    public Bloc(String fl, int line, int col) {
+    public Block(String fl, int line, int col) {
         this(new ArrayList<Instruction>(), fl, line, col);
     }
 
@@ -35,7 +35,7 @@ public class Bloc extends Instruction {
         this.instructions = instructions;
     }
     /**
-     * Add an instruction to this bloc
+     * Add an instruction to this Block
      */
     public void addInstruction(Instruction instr) {
         this.instructions.add(instr);
