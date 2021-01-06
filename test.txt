@@ -2,6 +2,7 @@ programme SecondTest
 entier n;
 booleen result;
 debutprg
-	result = faux;
+	result = vrai;
 	n = n + 3; 
+
 finprg

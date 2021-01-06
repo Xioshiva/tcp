@@ -47,9 +47,18 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Assignment node){
-        System.out.println("Affectation");
-        node.getDestination().accept(this);
-        node.getSource().accept(this);
+        Object dst = node.getDestination().accept(this);
+        Object src = node.getSource().accept(this);
+
+        //Dst est forcéement un Idf, par contre src peut être binaire, ou oper.
+        if(src instanceof Binary){
+            Class<?> srcClass = getTheClass(((Binary)src).getGauche());
+            if(srcClass != null && srcClass != getTheClass(dst)){
+                throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
+            }
+        }else if(src.getClass() != getTheClass(dst)) {
+            throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
+        }
         return node;
     }
 
@@ -92,6 +101,10 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Division node){
+        if(!binaryOperationIsOkay(node)){
+            throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
+        }
+
         return node;
     }
 
@@ -157,10 +170,18 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Multiplication node){
+        if(!binaryOperationIsOkay(node)){
+            throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
+        }
+
         return node;
     }
 
     public Object visit(Soustraction node){
+        if(!binaryOperationIsOkay(node)){
+            throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
+        }
+
         return node;
     }
 
