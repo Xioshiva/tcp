@@ -50,7 +50,6 @@ public class AnalyseurSementique implements ASTVisitor {
 
     public Object visit(Assignment node){
         
-        System.out.println(node);
         Object dst = node.getDestination().accept(this);
         Object src = node.getSource().accept(this);
 
@@ -77,7 +76,6 @@ public class AnalyseurSementique implements ASTVisitor {
 
 
     public Object visit(Block node){
-        node.getInstructions().forEach(i -> System.out.println(i));
         node.getInstructions().forEach(i -> i.accept(this));
         return node;
     }
@@ -91,7 +89,6 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(DeclarConst node){
-        System.out.println(node);
         Expression expr= node.getExpression();
         Idf idf = node.getId();
         if(getTheClass(idf) != getTheClass(expr)){
@@ -106,11 +103,12 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(ProgramDeclaration node){
-        System.out.println("ProgramDeclaration");
 
         node.getDeclaration().accept(this);
-        System.out.println("lol");
-        //node.getIdentifier().accept(this);
+        node.getIdentifier().accept(this);
+
+        //On n'est plus dans les déclarations, du coup on peut intérdire
+        //maintenant les affectations aux constantes
         this.positionBloc = true;
         node.getInstructions().accept(this);
         return node;
