@@ -4,8 +4,13 @@ import java.io.*;
 import java.util.*;
 
 action code {:
-// jdjdjd
-    
+  //Déclaration du tableau des Symboles
+  HashMap<String, Object>  TDS = new HashMap<>();
+  HashMap<String, Boolean> constantOrNot = new HashMap<>();    
+
+  void printTDS(){
+    TDS.forEach((k, v) -> System.out.println(k + ":" + v));
+  }
 :}
 
 
@@ -49,14 +54,14 @@ precedence left PLUS, MINUS, TIMES, DIVIDE, EQUALS, DIFF;
 precedence left INF, SUP, INFEQUAL, SUPEQUAL, AND, OR;
 precedence right TILDA, NOT;
 
-program           ::= header:p declar_lst STARTPRG body:instructions ENDPRG
-                    {:  p.setInstructions(instructions);
-                        System.out.println("ok, c'est good !!!!"); 
-                        RESULT = p;
+program           ::= header:f declar_lst:d STARTPRG body:instructions ENDPRG
+                    {:  
+                      f.setDeclarations(d);
+                      f.setInstructions(instructions);
+                      RESULT = f;
                     :};
-header            ::= PRG IDENT:id {: RESULT = new ProgramDeclaration(new Idf(id, "", idleft, idright), "", idleft, idright); :};
 
-
+header            ::= PRG IDENT:id {: RESULT = new ProgramDeclaration( new Idf(id, "", idleft, idright), "", idleft, idright, null, null , TDS, constantOrNot); :};
 
 declar_lst        ::=  declars:d {: RESULT = new Block(d, "", dleft, dright); :};
 
@@ -67,9 +72,17 @@ declars           ::= {: RESULT = new ArrayList(); :}
 declar            ::= declar_var:dv {: RESULT = dv; :}
                       | declar_const:dc {: RESULT = dc; :};
 
-declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVar(t, l, "", sleft, sright);:};
+declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVar(t, l, "", sleft, sright);
+                                                        
+                                                        for( Idf idf : l){
+                                                          TDS.put(idf.getNom(), (t.equals("integer") ? new Nombre(0,"",0,0) : new Vrai("",0,0)));
+                                                          constantOrNot.put(idf.getNom(), false);
+                                                        }:};
 
-declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {: RESULT = new DeclarConst(t, new Idf(i, "", ileft, iright), ex, "", sright, sleft); :};
+declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {:RESULT = new DeclarConst(t, new Idf(i, "", ileft, iright), ex, "", sright, sleft); 
+                                                                              TDS.put(i, (t.equals("integer") ? new Nombre(0,"",0,0) : new Vrai("",0,0)));
+                                                                              constantOrNot.put(i, true);
+                                                                              :};
 
 l_ident           ::= IDENT:i {: ArrayList<Idf> lst = new ArrayList<>(); 
                                   lst.add(new Idf(i, "", ileft, iright)); 
@@ -130,6 +143,7 @@ instr_lst         ::= {: RESULT = new ArrayList(); :}
                       {:
                         ArrayList<Instruction> instr= new ArrayList<>(il);
                         instr.add(i);
+                        
                         RESULT = instr;
                       :};
 instr             ::= assign:inst        {: RESULT = inst;  :}
@@ -138,6 +152,7 @@ instr             ::= assign:inst        {: RESULT = inst;  :}
                       | cond_instr:inst  {:  RESULT = inst; :}
                       | while_instr:inst {:  RESULT = inst;  :}
                       | for_instr:inst   {:  RESULT = inst;  :};
+
 assign            ::= access:a EQUAL:e expr:expr SEMICOLON:s {: RESULT = new Assignment(a, expr, "", sleft, sright); :};
 
 

@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 /*
  * Represent a function declaration instruction node inside the AST.
 */
@@ -16,12 +18,20 @@ public class ProgramDeclaration extends Instruction {
      */
     protected Block instructions;
 
+    protected HashMap<String, Object> TDS;
+
+    protected HashMap<String, Boolean> constantOrNot;
+
     /**
      * Constructor
      */
-    public ProgramDeclaration(Idf identifier, String fl, int line, int col){
+    public ProgramDeclaration(Idf identifier, String fl, int line, int col, Block declarations, Block instructions, HashMap<String, Object> TDS, HashMap<String, Boolean> constantOrNot){
         super(fl, line, col);
         this.identifier = identifier;
+        this.TDS = TDS;
+        this.constantOrNot = constantOrNot;
+        this.declarations = declarations;
+        this.instructions = instructions;
     }
 
     /**
@@ -41,6 +51,14 @@ public class ProgramDeclaration extends Instruction {
      */
     public Block getInstructions() {
         return this.instructions;
+    }
+
+    public HashMap<String, Object> getTDS(){
+        return this.TDS;
+    }
+
+    public HashMap<String, Boolean> getConstantOrNot(){
+        return this.constantOrNot;
     }
 
     /**

@@ -1,8 +1,7 @@
 programme SecondTest
 entier n;
-entier result;
+booleen result;
 debutprg
-    pour n allantde 0 a 20 faire
-		result = result + n;
-	finpour
+	result = faux;
+	n = n + 3; 
 finprg
