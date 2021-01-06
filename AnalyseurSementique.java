@@ -5,6 +5,8 @@ public class AnalyseurSementique implements ASTVisitor {
     private Map<String, Object> TDS;
     private Map<String, Boolean> constantOrNot;
 
+    //Pour distinguer de si oui ou non on se trouve dans le bloc des declaration
+    private boolean positionBloc = false;
 
     public AnalyseurSementique(Map<String, Object> TDS,Map<String, Boolean> constantOrNot){
         this.TDS = TDS;
@@ -47,24 +49,35 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Assignment node){
+        
+        System.out.println(node);
         Object dst = node.getDestination().accept(this);
         Object src = node.getSource().accept(this);
 
+        //On fait ça surtout pour voir si c'est une variable définie ou pas.
+        Class<?> dstClass = getTheClass(dst);
+
+        //Dst est forcément un Idf, mais juste au cas ou, on vérifie
+        if(dst.getClass() == Idf.class){
+            if(constantOrNot.get(((Idf)dst).getNom()) && this.positionBloc){
+                throw new RuntimeException("Affectation à une variable constante à la ligne : " + node.getLine());
+            }
+        }
         //Dst est forcéement un Idf, par contre src peut être binaire, ou oper.
         if(src instanceof Binary){
             Class<?> srcClass = getTheClass(((Binary)src).getGauche());
-            if(srcClass != null && srcClass != getTheClass(dst)){
+            if(srcClass != null && srcClass != dstClass){
                 throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
             }
-        }else if(src.getClass() != getTheClass(dst)) {
+        }else if(src.getClass() != dstClass) {
             throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
         }
         return node;
     }
 
 
-    //Pas sur que l'analyseur sémentique à besoin d'analyser un bloc
     public Object visit(Block node){
+        node.getInstructions().forEach(i -> System.out.println(i));
         node.getInstructions().forEach(i -> i.accept(this));
         return node;
     }
@@ -78,7 +91,12 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(DeclarConst node){
-        node.getExpression().accept(this);
+        System.out.println(node);
+        Expression expr= node.getExpression();
+        Idf idf = node.getId();
+        if(getTheClass(idf) != getTheClass(expr)){
+            throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
+        }
         return node;
     }
 
@@ -90,8 +108,10 @@ public class AnalyseurSementique implements ASTVisitor {
     public Object visit(ProgramDeclaration node){
         System.out.println("ProgramDeclaration");
 
-        node.getIdentifier().accept(this);
         node.getDeclaration().accept(this);
+        System.out.println("lol");
+        //node.getIdentifier().accept(this);
+        this.positionBloc = true;
         node.getInstructions().accept(this);
         return node;
     }
@@ -113,7 +133,6 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Egal node){
-        System.out.println("Egal");
         node.getGauche().accept(this);
         node.getGauche().accept(this);
         
@@ -129,7 +148,6 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Idf node){
-        System.out.println("Idf: " + node.toString());
         return node;
     }
 

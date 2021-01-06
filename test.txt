@@ -1,8 +1,6 @@
 programme SecondTest
 entier n;
-booleen result;
+constante entier result = 3;
 debutprg
-	result = vrai;
 	n = n + 3; 
-
 finprg

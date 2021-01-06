@@ -45,15 +45,15 @@ debutprg        { return new Symbol(sym.STARTPRG, yyline, yycolumn); }
 finprg          { return new Symbol(sym.ENDPRG, yyline, yycolumn); }
 constante       { return new Symbol(sym.CONSTANT, yyline, yycolumn); }
 {semicolon}     { return new Symbol(sym.SEMICOLON, yyline, yycolumn); }
-debutfonc       { return new Symbol(sym.STARTFUNC, yyline, yycolumn); }
-finfonc         { return new Symbol(sym.ENDFUNC, yyline, yycolumn); }
+//debutfonc       { return new Symbol(sym.STARTFUNC, yyline, yycolumn); }
+//finfonc         { return new Symbol(sym.ENDFUNC, yyline, yycolumn); }
 {openparent}    { return new Symbol(sym.OPENPARENT, yyline, yycolumn); }
 {closeparent}   { return new Symbol(sym.CLOSEPARENT, yyline, yycolumn); }
 {comma}         { return new Symbol(sym.COMMA, yyline, yycolumn); }
 {equal}         { return new Symbol(sym.EQUAL, yyline, yycolumn); }
-{doublepoints}  { return new Symbol(sym.DOUBLEPOINTS, yyline, yycolumn); }
-{openbrack}     { return new Symbol(sym.OPENBRACK, yyline, yycolumn); }
-{closebrack}    { return new Symbol(sym.CLOSEBRACK, yyline, yycolumn); }
+//{doublepoints}  { return new Symbol(sym.DOUBLEPOINTS, yyline, yycolumn); }
+//{openbrack}     { return new Symbol(sym.OPENBRACK, yyline, yycolumn); }
+//{closebrack}    { return new Symbol(sym.CLOSEBRACK, yyline, yycolumn); }
 
 {constantInt}   { return new Symbol(sym.INTEGERCONST, yyline, yycolumn, Integer.parseInt(yytext())); }
 {constanteStr}  { return new Symbol(sym.STRINGCONST, yyline, yycolumn, yytext()); }
@@ -62,7 +62,7 @@ entier          { return new Symbol(sym.TINTEGER, yyline, yycolumn); }
 booleen         { return new Symbol(sym.TBOOLEAN, yyline, yycolumn); }
 lire            { return new Symbol(sym.READ, yyline, yycolumn); }
 ecrire          { return new Symbol(sym.WRITE, yyline, yycolumn); }
-retourne        { return new Symbol(sym.RETURN, yyline, yycolumn); }
+//retourne        { return new Symbol(sym.RETURN, yyline, yycolumn); }
 si              { return new Symbol(sym.IF, yyline, yycolumn); }
 alors           { return new Symbol(sym.THEN, yyline, yycolumn); }
 sinon           { return new Symbol(sym.ELSE, yyline, yycolumn); }
