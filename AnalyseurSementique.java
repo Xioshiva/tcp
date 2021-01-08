@@ -82,6 +82,8 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(SiAlors node){
+        node.getExpr().accept(this);
+        node.getInstr().forEach(i->i.accept(this));
         return node;
     }
 
