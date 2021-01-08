@@ -19,6 +19,7 @@ public class AnalyseurSementique implements ASTVisitor {
         if(node.getClass() == Nombre.class){
             className = Nombre.class;
         }else if(node.getClass() == Vrai.class || node.getClass() == Faux.class){
+            //On traite tout les booleens comme la classe Vrai quand on compare les classes pour la sémentique
             className = Vrai.class;
         }else if(node.getClass() == Idf.class ){
             if(TDS.containsKey(((Idf)node).getNom())){
@@ -68,7 +69,7 @@ public class AnalyseurSementique implements ASTVisitor {
             if(srcClass != null && srcClass != dstClass){
                 throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
             }
-        }else if(src.getClass() != dstClass) {
+        }else if(getTheClass(src) != dstClass) {
             throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
         }
         return node;
@@ -118,6 +119,9 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Different node){
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
@@ -134,13 +138,16 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Egal node){
-        node.getGauche().accept(this);
-        node.getGauche().accept(this);
-        
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
     public Object visit(Et node){
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) != Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
@@ -153,10 +160,16 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(InfEgal node){
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
     public Object visit(Inferieur node){
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
@@ -176,7 +189,10 @@ public class AnalyseurSementique implements ASTVisitor {
         return node;
     }
 
-    public Object visit(Ou node){
+    public Object visit(Ou node){       
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) != Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
@@ -214,10 +230,16 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(SupEgal node){
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
     public Object visit(Superieur node){
+        if(!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class){
+            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
+        }
         return node;
     }
 
