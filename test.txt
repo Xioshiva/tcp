@@ -1,6 +1,8 @@
 programme SecondTest
 entier n;
-constante entier result = 3;
+booleen result;
 debutprg
-	n = n + 3; 
+	pour n allantde 0 a 20 faire
+		result = vrai;
+	finpour
 finprg

@@ -85,6 +85,9 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(SiAlorsSinon node){
+        node.getExpr().accept(this);
+        node.getInstr().forEach(i->i.accept(this));
+        node.getInstr2().forEach(i->i.accept(this));
         return node;
     }
 
@@ -182,6 +185,15 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Pour node){
+        //Il faut vérifier que la borneInf, l'Idf, et la borneSup sont du meme type!
+        //Et on ne veut pas incrémenter un booléen
+        if(getTheClass(node.getIdf()) == Vrai.class ||
+            getTheClass(node.getIdf()) != getTheClass(node.getBorneInf()) || 
+            getTheClass(node.getIdf()) != getTheClass(node.getBorneSup())){
+
+            throw new RuntimeException("Erreur de types à la ligne: " + node.getLine());
+        }
+        node.getInstr().forEach(i -> i.accept(this));
         return node;
     }
 
