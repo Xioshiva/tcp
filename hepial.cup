@@ -72,14 +72,14 @@ declars           ::= {: RESULT = new ArrayList(); :}
 declar            ::= declar_var:dv {: RESULT = dv; :}
                       | declar_const:dc {: RESULT = dc; :};
 
-declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVar(t, l, "", sleft, sright);
+declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVar(l, "", sleft, sright);
                                                         
                                                         for( Idf idf : l){
                                                           TDS.put(idf.getNom(), (t.equals("integer") ? new Nombre(0,"",0,0) : new Vrai("",0,0)));
                                                           constantOrNot.put(idf.getNom(), false);
                                                         }:};
 
-declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {:RESULT = new DeclarConst(t, new Idf(i, "", ileft, iright), ex, "", sright, sleft); 
+declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {:RESULT = new DeclarConst(new Idf(i, "", ileft, iright), ex, "", sright, sleft); 
                                                                               TDS.put(i, (t.equals("integer") ? new Nombre(0,"",0,0) : new Vrai("",0,0)));
                                                                               constantOrNot.put(i, true);
                                                                               :};
@@ -104,7 +104,7 @@ expr              ::= expr:left op_bin:op expr:right
                          op.lierDroit(right);
                          RESULT = op;  
                       :}
-                      | op_una:o expr:e {: o.lierExpression(e); :}
+                      | op_una:o expr:e {: o.lierExpression(e); RESULT = o; :}
                       | OPENPARENT:o expr:e CLOSEPARENT:c {: RESULT = new Parenthese(e, "", oleft, oright); :}
                       | operand:operand             {:  RESULT = operand;  :};
 
@@ -126,7 +126,8 @@ op_bin            ::= PLUS:o     {: RESULT = new Addition("", oleft, oright); :}
 
 op_una            ::= TILDA:o      {: RESULT = new Tilda("", oleft, oright);:}
                       | NOT:o      {: RESULT = new Non("", oleft, oright);  :}
-                      | MINUS:o    {: RESULT = new Moins("", oleft, oright);  :};
+                      | MINUS:o    {: RESULT = new Moins("", oleft, oright);:}
+                      | PLUS:o     {: RESULT = new Plus("",oleft,oright);:};
 
                       
 operand           ::= access:access       {: RESULT = access; :}

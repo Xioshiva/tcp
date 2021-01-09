@@ -2,7 +2,8 @@ programme SecondTest
 entier n;
 booleen result;
 debutprg
-	pour n allantde 0 a 20 faire
-		result = vrai;
-	finpour
+	tantque result faire
+		n = 3 + (3 + ( 5 + 7 ) );
+	fintantque
+
 finprg

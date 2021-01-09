@@ -1,4 +1,4 @@
-public class Unary extends Expression{
+public abstract class Unary extends Expression{
     private Expression expr;
 
     public Unary(String fl, int line, int col) {
@@ -18,7 +18,5 @@ public class Unary extends Expression{
         return "Unary: " + this.expr.toString() + "\n";
     }
 
-    Object accept(ASTVisitor visitor){
-        return visitor.visit(this);
-    }
+    abstract Object accept(ASTVisitor visitor);
 }

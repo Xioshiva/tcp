@@ -1,18 +1,12 @@
 public class DeclarConst  extends Instruction{
 
-    private String type;
     private Idf idf;
     private Expression expr;
 
-    public DeclarConst(String type, Idf idf, Expression expr, String fl, int line, int col){
+    public DeclarConst(Idf idf, Expression expr, String fl, int line, int col){
         super(fl, line, col);
-        this.type = type;
         this.idf = idf;
         this.expr = expr;
-    }
-
-    public String getType(){
-        return this.type;
     }
 
     public Idf getId(){
@@ -21,10 +15,6 @@ public class DeclarConst  extends Instruction{
 
     public Expression getExpression(){
         return this.expr;
-    }
-
-    public void lierType(String type){
-        this.type = type;
     }
 
     public void lierIdf(Idf idf){

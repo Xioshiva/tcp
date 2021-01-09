@@ -13,4 +13,5 @@ public abstract class Relation extends Binary {
     public String toString(){
         return "Relation: ";
     }
+    
 }

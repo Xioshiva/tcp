@@ -32,17 +32,35 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public boolean binaryOperationIsOkay(Binary node){
+
+        if(node.getDroite().accept(this) instanceof Binary){
+            if(node.getGauche().accept(this)  instanceof Binary){
+                System.out.println("lol");
+                return binaryOperationIsOkay((Binary)node.getDroite().accept(this))
+                        && binaryOperationIsOkay((Binary)node.getGauche().accept(this));
+            }else{
+                return binaryOperationIsOkay((Binary)node.getDroite().accept(this) ) 
+                        && getTheClass((((Binary)node.getDroite().accept(this)).getDroite())) == getTheClass(node.getGauche().accept(this));
+            }
+        }else if(node.getGauche().accept(this)  instanceof Binary){
+            return binaryOperationIsOkay((Binary)node.getGauche().accept(this)) 
+                        && getTheClass((((Binary)node.getGauche().accept(this)).getDroite())) == getTheClass(node.getDroite().accept(this));
+        }
+
+        if(node.getGauche().accept(this) instanceof Binary){
+            binaryOperationIsOkay((Binary)node.getGauche().accept(this));
+        }
+
         Class<?> classDroite = getTheClass(node.getDroite().accept(this));
         Class<?> classGauche = getTheClass(node.getGauche().accept(this));
 
-        //System.out.println(classDroite.toString() +  " - " + classGauche.toString());
         return classGauche == classDroite;
     }
 
 
     public Object visit(Addition node){
-
         if(!binaryOperationIsOkay(node)){
+            System.out.println(node.getGauche().accept(this).toString() + " + " + node.getDroite().accept(this).toString());
             throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
         }
 
@@ -67,10 +85,14 @@ public class AnalyseurSementique implements ASTVisitor {
         if(src instanceof Binary){
             Class<?> srcClass = getTheClass(((Binary)src).getGauche());
             if(srcClass != null && srcClass != dstClass){
-                throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
+                throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
+            }
+        }else if(src instanceof Unary){
+            if(getTheClass(((Unary)src).getExpression()) != dstClass){
+                throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
             }
         }else if(getTheClass(src) != dstClass) {
-            throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
+            throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
         }
         return node;
     }
@@ -98,7 +120,7 @@ public class AnalyseurSementique implements ASTVisitor {
         Expression expr= node.getExpression();
         Idf idf = node.getId();
         if(getTheClass(idf) != getTheClass(expr)){
-            throw new RuntimeException("Affactation illégale à la ligne : " + node.getLine());
+            throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
         }
         return node;
     }
@@ -158,6 +180,9 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Idf node){
+        if(!TDS.containsKey(node.getNom()) && this.positionBloc){
+            throw new RuntimeException("Variable non déclarée à la ligne: " + node.getLine());
+        }
         return node;
     }
 
@@ -180,6 +205,13 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Moins node){
+        if(node.getExpression().getClass() != Idf.class){
+            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
+        }
+        if(getTheClass(node.getExpression()) != Nombre.class){
+            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
+        }
+        node.getExpression().accept(this);
         return node;
     }
 
@@ -188,6 +220,13 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Non node){
+        if(node.getExpression().getClass() != Idf.class){
+            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
+        }
+        if(getTheClass(node.getExpression()) != Vrai.class){
+            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
+        }
+        node.getExpression().accept(this);
         return node;
     }
 
@@ -199,7 +238,8 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Parenthese node){
-        return node;
+        node.getExpression().accept(this);
+        return node.getExpression();
     }
 
     public Object visit(Pour node){
@@ -246,10 +286,19 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(TantQue node){
+        node.getExpr().accept(this);
+        node.getInstr().forEach(i->i.accept(this));
         return node;
     }
 
     public Object visit(Tilda node){
+        if(node.getExpression().getClass() != Idf.class){
+            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
+        }
+        if(getTheClass(node.getExpression()) != Nombre.class){
+            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
+        }
+        node.getExpression().accept(this);
         return node;
     }
 
@@ -257,7 +306,9 @@ public class AnalyseurSementique implements ASTVisitor {
         return node;
     }
 
+
     public Object visit(Unary node){
+
         return node;
     }
 
