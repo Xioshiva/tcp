@@ -100,11 +100,9 @@ public class AnalyseurSementique implements ASTVisitor {
         // Dst est forcéement un Idf, par contre src peut être binaire, ou oper.
         if (src instanceof Binary) {
 
-            Class<?> srcClass = getTheClass(((Binary)src));
+            Class<?> srcClass = getTheClass(((Binary) src));
             if (srcClass != null && srcClass != dstClass) {
-
                 throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
-
             }
         } else if (src instanceof Unary) {
             if (getTheClass(((Unary) src).getExpression()) != dstClass) {
@@ -187,7 +185,7 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Et node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) != Vrai.class) {
+        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite().accept(this)) != Vrai.class) {
             throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
         }
         return node;
@@ -243,7 +241,7 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Non node) {
-        if (getTheClass(node.getExpression()) != Vrai.class) {
+        if (getTheClass(node.getExpression().accept(this)) != Vrai.class) {
             throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
         }
         node.getExpression().accept(this);
@@ -251,7 +249,8 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Ou node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) != Vrai.class) {
+        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite().accept(this)) != Vrai.class) {
+            System.out.println(node.toString() + getTheClass(node.getDroite()).toString());
             throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
         }
         return node;

@@ -2,12 +2,15 @@ programme SecondTest
 entier n;
 booleen result;
 debutprg
-	tantque result faire
+	tantque result ou (n + 3) faire
 		n = (3+3) + (3+3);
+		
+		
 		n=+3;
 		n=-2;
 		n=~n;
 		result = non result;
+
 		result = n > 3;
 		result = vrai;
 	fintantque
