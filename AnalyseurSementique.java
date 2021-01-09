@@ -33,34 +33,47 @@ public class AnalyseurSementique implements ASTVisitor {
 
     public boolean binaryOperationIsOkay(Binary node){
 
-        if(node.getDroite().accept(this) instanceof Binary){
-            if(node.getGauche().accept(this)  instanceof Binary){
-                System.out.println("lol");
-                return binaryOperationIsOkay((Binary)node.getDroite().accept(this))
-                        && binaryOperationIsOkay((Binary)node.getGauche().accept(this));
-            }else{
-                return binaryOperationIsOkay((Binary)node.getDroite().accept(this) ) 
-                        && getTheClass((((Binary)node.getDroite().accept(this)).getDroite())) == getTheClass(node.getGauche().accept(this));
-            }
-        }else if(node.getGauche().accept(this)  instanceof Binary){
-            return binaryOperationIsOkay((Binary)node.getGauche().accept(this)) 
-                        && getTheClass((((Binary)node.getGauche().accept(this)).getDroite())) == getTheClass(node.getDroite().accept(this));
-        }
-
-        if(node.getGauche().accept(this) instanceof Binary){
-            binaryOperationIsOkay((Binary)node.getGauche().accept(this));
-        }
+        
+        //System.out.println("Node: " + node.getClass().toString());
+        
+        //System.out.println("\t" + node.getGauche().accept(this).toString() + " <-> " + node.getDroite().accept(this).toString());
+       
+        boolean leftOkay = true;
+        boolean rightOkay = true;
+        boolean okayFlag = false;
 
         Class<?> classDroite = getTheClass(node.getDroite().accept(this));
         Class<?> classGauche = getTheClass(node.getGauche().accept(this));
 
+        if(node.getDroite() instanceof Parenthese){
+            if(((Parenthese)node.getDroite()).getExpression() instanceof Binary){
+                rightOkay = binaryOperationIsOkay(((Binary)((Parenthese)node.getDroite()).getExpression()));
+                okayFlag = true;
+            }else{ //C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese comme ça: (3)
+                classDroite = getTheClass(((Parenthese)node.getDroite()).getExpression());
+                rightOkay = true;
+            }
+        }
+
+        if(node.getGauche() instanceof Parenthese){
+             if(((Parenthese)node.getGauche()).getExpression() instanceof Binary){
+                leftOkay = binaryOperationIsOkay(((Binary)((Parenthese)node.getGauche()).getExpression()));
+                okayFlag = true;
+            }else{ //C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese comme ça: (3)
+                classGauche = getTheClass(((Parenthese)node.getGauche()).getExpression());
+                leftOkay = true;
+            }
+        }
+        if(okayFlag){
+            return leftOkay && rightOkay;
+        }
         return classGauche == classDroite;
     }
 
 
     public Object visit(Addition node){
         if(!binaryOperationIsOkay(node)){
-            System.out.println(node.getGauche().accept(this).toString() + " + " + node.getDroite().accept(this).toString());
+            //System.out.println(node.getGauche().accept(this).toString() + " + " + node.getDroite().accept(this).toString());
             throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
         }
 

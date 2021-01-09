@@ -19,7 +19,7 @@ public class Addition extends Arithmetique {
 
     @Override
     public String toString(){
-        return "Addition: " + this.operandeGauche.toString() + " + " + this.operandeDroite.toString();
+        return "Addition: ";
     }
     
     public int apply(int left, int right){

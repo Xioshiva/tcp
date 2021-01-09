@@ -3,7 +3,7 @@ entier n;
 booleen result;
 debutprg
 	tantque result faire
-		n = 3 + (3 + ( 5 + 7 ) );
+		n = (3+3) + (3+3);
 	fintantque
 
 finprg
