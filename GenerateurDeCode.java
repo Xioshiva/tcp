@@ -1,6 +1,6 @@
 import java.util.Map;
 
-public class AnalyseurSementique implements ASTVisitor {
+public class GenerateurDeCode implements ASTVisitor {
 
     private Map<String, Object> TDS;
     private Map<String, Boolean> constantOrNot;
@@ -8,12 +8,12 @@ public class AnalyseurSementique implements ASTVisitor {
     // Pour distinguer de si oui ou non on se trouve dans le bloc des declaration
     private boolean positionBloc = false;
 
-    public AnalyseurSementique(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
+    public GenerateurDeCode(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
         this.TDS = TDS;
         this.constantOrNot = constantOrNot;
     }
 
-    public Class<?> getTheClass(Object node) {
+/*     public Class<?> getTheClass(Object node) {
         Class<?> className = null;
         if (node.getClass() == Nombre.class) {
             className = Nombre.class;
@@ -29,9 +29,9 @@ public class AnalyseurSementique implements ASTVisitor {
             }
         }
         return className;
-    }
+    } */
 
-    public boolean binaryOperationIsOkay(Binary node) {
+  /*   public boolean binaryOperationIsOkay(Binary node) {
 
         // System.out.println("Node: " + node.getClass().toString());
 
@@ -71,46 +71,13 @@ public class AnalyseurSementique implements ASTVisitor {
             return leftOkay && rightOkay;
         }
         return classGauche == classDroite;
-    }
+    } */
 
     public Object visit(Addition node) {
-        if (!binaryOperationIsOkay(node)) {
-            // System.out.println(node.getGauche().accept(this).toString() + " + " +
-            // node.getDroite().accept(this).toString());
-            throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
-        }
-
         return node;
     }
 
     public Object visit(Assignment node) {
-
-        Object dst = node.getDestination().accept(this);
-        Object src = node.getSource().accept(this);
-
-        // On fait ça surtout pour voir si c'est une variable définie ou pas.
-        Class<?> dstClass = getTheClass(dst);
-
-        // Dst est forcément un Idf, mais juste au cas ou, on vérifie
-        if (dst.getClass() == Idf.class) {
-            if (constantOrNot.get(((Idf) dst).getNom()) && this.positionBloc) {
-                throw new RuntimeException("Affectation à une variable constante à la ligne : " + node.getLine());
-            }
-        }
-        // Dst est forcéement un Idf, par contre src peut être binaire, ou oper.
-        if (src instanceof Binary) {
-
-            Class<?> srcClass = getTheClass(((Binary) src));
-            if (srcClass != null && srcClass != dstClass) {
-                throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
-            }
-        } else if (src instanceof Unary) {
-            if (getTheClass(((Unary) src).getExpression()) != dstClass) {
-                throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
-            }
-        } else if (getTheClass(src) != dstClass) {
-            throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
-        }
         return node;
     }
 
@@ -133,11 +100,7 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(DeclarConst node) {
-        Expression expr = node.getExpression();
-        Idf idf = node.getId();
-        if (getTheClass(idf) != getTheClass(expr)) {
-            throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
-        }
+ 
         return node;
     }
 
@@ -159,17 +122,11 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Different node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
+  
         return node;
     }
 
     public Object visit(Division node) {
-        if (!binaryOperationIsOkay(node)) {
-            throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
-        }
-
         return node;
     }
 
@@ -178,16 +135,11 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Egal node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
         return node;
     }
 
     public Object visit(Et node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite().accept(this)) != Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
+    
         return node;
     }
 
@@ -196,23 +148,14 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Idf node) {
-        if (!TDS.containsKey(node.getNom()) && this.positionBloc) {
-            throw new RuntimeException("Variable non déclarée à la ligne: " + node.getLine());
-        }
         return node;
     }
 
     public Object visit(InfEgal node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
         return node;
     }
 
     public Object visit(Inferieur node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
         return node;
     }
 
@@ -221,18 +164,10 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Moins node) {
-        if (getTheClass(node.getExpression()) != Nombre.class) {
-            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
-        }
-        node.getExpression().accept(this);
         return node;
     }
 
     public Object visit(Plus node) {
-        if (getTheClass(node.getExpression()) != Nombre.class) {
-            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
-        }
-        node.getExpression().accept(this);
         return node;
     }
 
@@ -241,17 +176,10 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Non node) {
-        if (getTheClass(node.getExpression().accept(this)) != Vrai.class) {
-            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
-        }
-        node.getExpression().accept(this);
         return node;
     }
 
     public Object visit(Ou node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite().accept(this)) != Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
         return node;
     }
 
@@ -261,44 +189,23 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Pour node) {
-        // Il faut vérifier que la borneInf, l'Idf, et la borneSup sont du meme type!
-        // Et on ne veut pas incrémenter un booléen
-        if (getTheClass(node.getIdf()) == Vrai.class || getTheClass(node.getIdf()) != getTheClass(node.getBorneInf())
-                || getTheClass(node.getIdf()) != getTheClass(node.getBorneSup())) {
-
-            throw new RuntimeException("Erreur de types à la ligne: " + node.getLine());
-        }
         node.getInstr().forEach(i -> i.accept(this));
         return node;
     }
 
     public Object visit(Multiplication node) {
-        if (!binaryOperationIsOkay(node)) {
-            throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
-        }
-
         return node;
     }
 
     public Object visit(Soustraction node) {
-        if (!binaryOperationIsOkay(node)) {
-            throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
-        }
-
         return node;
     }
 
     public Object visit(SupEgal node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
         return node;
     }
 
     public Object visit(Superieur node) {
-        if (!binaryOperationIsOkay(node) || getTheClass(node.getDroite()) == Vrai.class) {
-            throw new RuntimeException("Problème de types à la ligne: " + node.getLine());
-        }
         return node;
     }
 
@@ -309,9 +216,6 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Tilda node) {
-        if (getTheClass(node.getExpression()) != Nombre.class) {
-            throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
-        }
         node.getExpression().accept(this);
         return node;
     }
