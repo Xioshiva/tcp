@@ -27,6 +27,8 @@ public class AnalyseurSementique implements ASTVisitor {
             } else {
                 throw new RuntimeException("Variable non déclarée à la ligne: " + ((ASTNode) node).getLine());
             }
+        }else if(node instanceof Binary){
+            className = getTheClass(((Binary)node).getGauche());
         }
         return className;
     }
@@ -67,6 +69,7 @@ public class AnalyseurSementique implements ASTVisitor {
                 leftOkay = true;
             }
         }
+        
         if (okayFlag) {
             return leftOkay && rightOkay;
         }
@@ -105,7 +108,7 @@ public class AnalyseurSementique implements ASTVisitor {
                 throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
             }
         } else if (src instanceof Unary) {
-            if (getTheClass(((Unary) src).getExpression()) != dstClass) {
+            if (getTheClass(((Unary) src).getExpression().accept(this)) != dstClass) {
                 throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
             }
         } else if (getTheClass(src) != dstClass) {
