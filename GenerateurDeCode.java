@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.util.ArrayList;
 
 public class GenerateurDeCode implements ASTVisitor {
 
@@ -8,6 +9,22 @@ public class GenerateurDeCode implements ASTVisitor {
     // Pour distinguer de si oui ou non on se trouve dans le bloc des declaration
     private boolean positionBloc = false;
     
+    private ArrayList<String> indexes = new ArrayList<>();
+
+    //A chaque fois qu'il faut manipuler une variable, 
+    //Il faut vérifier son index; et si l'index est -1;
+    //Alors il faut l'ajouter à la liste et utiliser 
+    //this.indexes.size() comme nouvel index.
+    private int indexVariable(String nom){
+        int index = 0;
+        for( String s : this.indexes){
+            if(indexes.get(index).equals(nom))
+                return index;
+            index+=1;
+        }
+        return -1;
+    }
+
 
     public GenerateurDeCode(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
         this.TDS = TDS;
