@@ -10,16 +10,22 @@ public class Hepialc {
                 //Lexicale
                 HepialLexer myLex = new HepialLexer(myFile);
                 parser myP = new parser(myLex);
+                System.out.println("Lex. looking good!");
                 //Syntaxique
                 ProgramDeclaration program = (ProgramDeclaration)myP.parse().value;
                 HashMap<String, Object> TDS = program.getTDS();
                 HashMap<String, Boolean> constantOrNot = program.getConstantOrNot();
+                System.out.println("Syntax looking good!");
+
                 //Sémentique
                 AnalyseurSementique as = new AnalyseurSementique(TDS, constantOrNot);
                 program.accept(as);
-                System.out.println("Looking good!");
+                System.out.println("Sematincs looking good!");
                 //Gen de code
-            
+                GenerateurDeCode gdc = new GenerateurDeCode(TDS, constantOrNot);
+                program.accept(gdc);
+                System.out.println("Jasmin code generated!");
+                
                 try {
                 }
                 catch (Exception e) {

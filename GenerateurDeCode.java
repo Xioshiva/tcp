@@ -7,73 +7,15 @@ public class GenerateurDeCode implements ASTVisitor {
 
     // Pour distinguer de si oui ou non on se trouve dans le bloc des declaration
     private boolean positionBloc = false;
+    
 
     public GenerateurDeCode(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
         this.TDS = TDS;
         this.constantOrNot = constantOrNot;
     }
 
-/*     public Class<?> getTheClass(Object node) {
-        Class<?> className = null;
-        if (node.getClass() == Nombre.class) {
-            className = Nombre.class;
-        } else if (node.getClass() == Vrai.class || node.getClass() == Faux.class || node instanceof Relation) {
-            // On traite tout les booleens comme la classe Vrai quand on compare les classes
-            // pour la sémentique
-            className = Vrai.class;
-        } else if (node.getClass() == Idf.class) {
-            if (TDS.containsKey(((Idf) node).getNom())) {
-                className = TDS.get(((Idf) node).getNom()).getClass();
-            } else {
-                throw new RuntimeException("Variable non déclarée à la ligne: " + ((ASTNode) node).getLine());
-            }
-        }
-        return className;
-    } */
-
-  /*   public boolean binaryOperationIsOkay(Binary node) {
-
-        // System.out.println("Node: " + node.getClass().toString());
-
-        // System.out.println("\t" + node.getGauche().accept(this).toString() + " <-> "
-        // + node.getDroite().accept(this).toString());
-
-        // Flag pour les parentheses
-        boolean leftOkay = true;
-        boolean rightOkay = true;
-        boolean okayFlag = false;
-
-        Class<?> classDroite = getTheClass(node.getDroite().accept(this));
-        Class<?> classGauche = getTheClass(node.getGauche().accept(this));
-
-        if (node.getDroite() instanceof Parenthese) {
-            if (((Parenthese) node.getDroite()).getExpression() instanceof Binary) {
-                rightOkay = binaryOperationIsOkay(((Binary) ((Parenthese) node.getDroite()).getExpression()));
-                okayFlag = true;
-            } else { // C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese
-                     // comme ça: (3)
-                classDroite = getTheClass(((Parenthese) node.getDroite()).getExpression());
-                rightOkay = true;
-            }
-        }
-
-        if (node.getGauche() instanceof Parenthese) {
-            if (((Parenthese) node.getGauche()).getExpression() instanceof Binary) {
-                leftOkay = binaryOperationIsOkay(((Binary) ((Parenthese) node.getGauche()).getExpression()));
-                okayFlag = true;
-            } else { // C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese
-                     // comme ça: (3)
-                classGauche = getTheClass(((Parenthese) node.getGauche()).getExpression());
-                leftOkay = true;
-            }
-        }
-        if (okayFlag) {
-            return leftOkay && rightOkay;
-        }
-        return classGauche == classDroite;
-    } */
-
     public Object visit(Addition node) {
+
         return node;
     }
 

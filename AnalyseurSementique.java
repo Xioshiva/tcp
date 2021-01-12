@@ -224,7 +224,7 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Moins node) {
-        if (getTheClass(node.getExpression()) != Nombre.class) {
+        if (getTheClass(node.getExpression().accept(this)) != Nombre.class) {
             throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
         }
         node.getExpression().accept(this);
@@ -312,7 +312,7 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Tilda node) {
-        if (getTheClass(node.getExpression()) != Nombre.class) {
+        if (getTheClass(node.getExpression().accept(this)) != Nombre.class) {
             throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
         }
         node.getExpression().accept(this);

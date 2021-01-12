@@ -2,10 +2,10 @@ programme SecondTest
 entier n;
 booleen result;
 debutprg
-	tantque result ou (n > 3) faire
+	tantque result et (n > 3) faire
 
-		n=+(3*2);
-		result = non ( n > 3 );
+		n=-(3*2);
+		result = result et ( n > 3 );
 
 	fintantque
 
