@@ -8,23 +8,24 @@ public class GenerateurDeCode implements ASTVisitor {
 
     // Pour distinguer de si oui ou non on se trouve dans le bloc des declaration
     private boolean positionBloc = false;
-    
+
     private ArrayList<String> indexes = new ArrayList<>();
 
-    //A chaque fois qu'il faut manipuler une variable, 
-    //Il faut vérifier son index; et si l'index est -1;
-    //Alors il faut l'ajouter à la liste et utiliser 
-    //this.indexes.size() comme nouvel index.
-    private int indexVariable(String nom){
+    private String tgtCode = "";
+
+    // A chaque fois qu'il faut manipuler une variable,
+    // Il faut vérifier son index; et si l'index est -1;
+    // Alors il faut l'ajouter à la liste et utiliser
+    // this.indexes.size() comme nouvel index.
+    private int indexVariable(String nom) {
         int index = 0;
-        for( String s : this.indexes){
-            if(indexes.get(index).equals(nom))
+        for (String s : this.indexes) {
+            if (indexes.get(index).equals(nom))
                 return index;
-            index+=1;
+            index += 1;
         }
         return -1;
     }
-
 
     public GenerateurDeCode(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
         this.TDS = TDS;
@@ -58,13 +59,35 @@ public class GenerateurDeCode implements ASTVisitor {
         return node;
     }
 
+    public void ecrireDeclaration(Idf node) {
+        String id = node.getNom();
+        if (indexVariable(id) != -1) {
+            throw new RuntimeException("Variable déjà déclarée!");
+        } else {
+            this.tgtCode += ".var " + this.indexes.size() + " is " + id;
+            this.indexes.add(id);
+        }
+        if (TDS.get(id).getClass() == Number.class) {
+            this.tgtCode += "I\n";
+        } else if (TDS.get(id).getClass() == Boolean.class) {
+            this.tgtCode += "Z\n";
+        } else {
+            throw new RuntimeException("Type inconnu à la ligne: " + node.getLine());
+        }
+    }
+
     public Object visit(DeclarConst node) {
- 
+        ecrireDeclaration(node.getId());
+        this.tgtCode += "ldc " + 
         return node;
     }
 
     public Object visit(DeclarVar node) {
-        node.getIds().forEach(i -> i.accept(this));
+
+        ArrayList<Idf> idfs = node.getIds();
+        for (Idf i : idfs) {
+            ecrireDeclaration(i);
+        }
         return node;
     }
 
@@ -81,7 +104,7 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(Different node) {
-  
+
         return node;
     }
 
@@ -98,7 +121,7 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(Et node) {
-    
+
         return node;
     }
 
