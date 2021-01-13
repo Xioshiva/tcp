@@ -36,7 +36,6 @@ public interface ASTVisitor {
     Object visit(TantQue node);
     Object visit(Tilda node);
     Object visit(Vrai node);
-    Object visit(Unary node);
 
 }
 

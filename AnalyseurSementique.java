@@ -323,9 +323,4 @@ public class AnalyseurSementique implements ASTVisitor {
         return node;
     }
 
-    public Object visit(Unary node) {
-
-        return node;
-    }
-
 }

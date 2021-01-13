@@ -5,11 +5,8 @@ import java.util.ArrayList;
 public class GenerateurDeCode implements ASTVisitor {
 
     private Map<String, Object> TDS;
-    private Map<String, Boolean> constantOrNot;
 
     // Pour distinguer de si oui ou non on se trouve dans le bloc des declaration
-    private boolean positionBloc = false;
-
     private ArrayList<String> indexes = new ArrayList<>();
 
     private String tgtCode = "";
@@ -49,9 +46,8 @@ public class GenerateurDeCode implements ASTVisitor {
         return -1;
     }
 
-    public GenerateurDeCode(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
+    public GenerateurDeCode(Map<String, Object> TDS) {
         this.TDS = TDS;
-        this.constantOrNot = constantOrNot;
     }
 
     public Object visit(Addition node) {
@@ -152,7 +148,6 @@ public class GenerateurDeCode implements ASTVisitor {
         node.getDeclaration().accept(this);
         // On n'est plus dans les déclarations, du coup on peut intérdire
         // maintenant les affectations aux constantes
-        this.positionBloc = true;
         node.getInstructions().accept(this);
         this.tgtCode += "return\n";
         this.tgtCode += ".end method\n";

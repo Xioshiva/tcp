@@ -22,7 +22,7 @@ public class Hepialc {
                 program.accept(as);
                 System.out.println("Sematincs looking good!");
                 //Gen de code
-                GenerateurDeCode gdc = new GenerateurDeCode(TDS, constantOrNot);
+                GenerateurDeCode gdc = new GenerateurDeCode(TDS);
                 program.accept(gdc);
                 
                 File fichier = new File("test.j");
