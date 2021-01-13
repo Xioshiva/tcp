@@ -2,6 +2,9 @@ programme SecondTest
 entier n;
 booleen result ;
 debutprg
-	n =  -3 + 4;
-	ecrire n;
+	n = 3;
+	result = vrai ;
+	pour n allantde 0 a 8 faire
+		ecrire n;
+	finpour
 finprg

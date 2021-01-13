@@ -6,13 +6,25 @@
 .var 0 is n I
 .var 1 is result Z
 ldc 3
-ldc 4
-iadd
-ineg
 istore 0
+ldc 1
+istore 1
+ldc 0
+istore 0
+label_0:
+ldc 8
+iload 0
+if_icmplt label_1
+iload 0
 getstatic java/lang/System/out Ljava/io/PrintStream;
-ldc "lol"
-invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+swap
+invokevirtual java/io/PrintStream/print(I)V
+iload 0
+ldc 1
+iadd
+istore 0
+goto label_0
+label_1:
 return
 .end method
 

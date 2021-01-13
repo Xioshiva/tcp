@@ -21,6 +21,21 @@ public class GenerateurDeCode implements ASTVisitor {
         return this.tgtCode;
     }
 
+    //Complète le if_cmpXX en ajoutant les labels et goto -> Pas très efficace dans le cas des conditions, 
+    //mais bien plus facile à mettre en oueuvre
+    public void remplirCondition(){
+        int tmp = this.labelIndex;
+        this.tgtCode += "label_" + tmp + "\n";
+        this.labelIndex++;
+        this.tgtCode += "ldc 0\n";
+        this.tgtCode += "goto label_" + labelIndex + "\n";
+        this.tgtCode += "label_" + tmp + ":\n";
+        this.tgtCode += "ldc 1\n";
+        this.tgtCode += "label_" + labelIndex + ":\n";
+        this.labelIndex++;
+    }
+
+
 
     // A chaque fois qu'il faut manipuler une variable,
     // Il faut vérifier son index; et si l'index est -1;
@@ -62,14 +77,33 @@ public class GenerateurDeCode implements ASTVisitor {
 
     public Object visit(SiAlors node) {
         node.getExpr().accept(this);
+
+        int indexTemporaire = this.labelIndex;
+        this.tgtCode +="ifeq label_" + indexTemporaire + "\n";
+        this.labelIndex+=1;
         node.getInstr().forEach(i -> i.accept(this));
+        this.tgtCode +="label_" + indexTemporaire + ":\n"; 
+
         return node;
     }
 
     public Object visit(SiAlorsSinon node) {
         node.getExpr().accept(this);
+
+
+        //If Then
+        int indexTemporaire = this.labelIndex;
+        this.tgtCode +="ifeq label_" + indexTemporaire + "\n";
+        this.labelIndex+=1;
         node.getInstr().forEach(i -> i.accept(this));
+        int indexTemp2 = this.labelIndex;
+        this.tgtCode +="goto label_" + indexTemp2 + "\n"; 
+        
+        //Else
+        this.tgtCode +="label_" + indexTemporaire + ":\n"; 
         node.getInstr2().forEach(i -> i.accept(this));
+        this.tgtCode +="label_" + indexTemp2 + ":\n"; 
+
         return node;
     }
 
@@ -133,7 +167,8 @@ public class GenerateurDeCode implements ASTVisitor {
     public Object visit(Different node) {
         node.getDroite().accept(this);
         node.getGauche().accept(this);
-        this.tgtCode += "if_icmpne\n";
+        this.tgtCode += "if_icmpne ";
+        remplirCondition();
         return node;
     }
 
@@ -161,7 +196,8 @@ public class GenerateurDeCode implements ASTVisitor {
     public Object visit(Egal node) {
         node.getDroite().accept(this);
         node.getGauche().accept(this);
-        this.tgtCode += "if_icmpeq\n";
+        this.tgtCode += "if_icmpeq ";
+        remplirCondition();
         return node;
     }
 
@@ -186,16 +222,18 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(InfEgal node) {
-        node.getDroite().accept(this);
         node.getGauche().accept(this);
-        this.tgtCode += "if_icmple\n";
+        node.getDroite().accept(this);
+        this.tgtCode += "if_icmple ";
+        remplirCondition();
         return node;
     }
 
     public Object visit(Inferieur node) {
-        node.getDroite().accept(this);
         node.getGauche().accept(this);
-        this.tgtCode += "if_icmplt\n";
+        node.getDroite().accept(this);
+        this.tgtCode += "if_icmplt ";
+        remplirCondition();
         return node;
     }
 
@@ -221,17 +259,25 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(Non node) {
+
+        //On met la valeur de notre Expression en haut de la pile
         node.getExpression().accept(this);
         
-        this.tgtCode += "ldc 1\n";
-        //Si la valeur qu'on a dans la pile est égale à 1;
-        //Alors on met 0 en haut de la pile;
-        int tmp = labelIndex;
-        this.tgtCode += "ifeq label_" + labelIndex + "\n";
-        labelIndex++;
+        int tmp = this.labelIndex;
+        this.labelIndex++;
+
+        this.tgtCode += "ifeq label_" + tmp + "\n";
         this.tgtCode += "ldc 0\n";
-        tgtCode += "label_: " + tmp + "\n";
-        //Sinon on laisse le 1 qu'on a écrit en haut.
+        this.tgtCode += "goto label_" + this.labelIndex +"\n";
+
+
+        tgtCode += "label_" + tmp + ":\n";
+        this.tgtCode += "ldc 1\n";
+
+        this.tgtCode += "label_" + this.labelIndex + ":\n";
+        this.labelIndex++;
+
+
         return node;
     }
 
@@ -248,7 +294,30 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(Pour node) {
+        node.getBorneInf().accept(this);
+
+        this.tgtCode += "istore " + indexVariable(node.getIdf().getNom())+"\n"; 
+
+        int tmp = this.labelIndex;
+        this.labelIndex++;
+        int tmp2 = this.labelIndex;
+        this.labelIndex++;
+
+        this.tgtCode +="label_" + tmp +":\n";
+        node.getBorneSup().accept(this);
+        node.getIdf().accept(this);
+
+        this.tgtCode += "if_icmplt label_" + tmp2 + "\n";
+
         node.getInstr().forEach(i -> i.accept(this));
+
+        node.getIdf().accept(this);
+        this.tgtCode += "ldc 1\n";
+        this.tgtCode += "iadd\n";
+        this.tgtCode += "istore " + indexVariable(node.getIdf().getNom())+"\n"; 
+        this.tgtCode += "goto label_" + tmp +"\n";
+        this.tgtCode +="label_" + tmp2 +":\n";
+
         return node;
     }
 
@@ -267,22 +336,35 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(SupEgal node) {
-        node.getDroite().accept(this);
         node.getGauche().accept(this);
-        this.tgtCode += "if_icmpge\n";
+        node.getDroite().accept(this);
+        this.tgtCode += "if_icmpge ";
+        remplirCondition();
         return node;
     }
 
     public Object visit(Superieur node) {
-        node.getDroite().accept(this);
         node.getGauche().accept(this);
-        this.tgtCode += "if_icmpgt\n";
+        node.getDroite().accept(this);
+        this.tgtCode += "if_icmpgt ";
+        remplirCondition();
         return node;
     }
 
     public Object visit(TantQue node) {
+        int tmp = this.labelIndex;
+        this.labelIndex++;
+        this.tgtCode += "label_"+tmp+":\n";
         node.getExpr().accept(this);
+
+        int tmp2 = this.labelIndex;
+        this.labelIndex++;
+
+        this.tgtCode += "ifeq label_"+ tmp2 +"\n";
+
         node.getInstr().forEach(i -> i.accept(this));
+        this.tgtCode += "goto label_"+ tmp +"\n";
+        this.tgtCode += "label_"+tmp2+":\n";
         return node;
     }
 
