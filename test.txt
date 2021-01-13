@@ -1,12 +1,7 @@
 programme SecondTest
 entier n;
-booleen result;
+booleen result ;
 debutprg
-	tantque result et (n > 3) faire
-
-		n=-(3*2);
-		result = result et ( n > 3 );
-
-	fintantque
-
+	n =  -3 + 4;
+	ecrire n;
 finprg

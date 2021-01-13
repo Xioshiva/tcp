@@ -34,12 +34,6 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public boolean binaryOperationIsOkay(Binary node) {
-
-        // System.out.println("Node: " + node.getClass().toString());
-
-        // System.out.println("\t" + node.getGauche().accept(this).toString() + " <-> "
-        // + node.getDroite().accept(this).toString());
-
         // Flag pour les parentheses
         boolean leftOkay = true;
         boolean rightOkay = true;
@@ -52,7 +46,11 @@ public class AnalyseurSementique implements ASTVisitor {
             if (((Parenthese) node.getDroite()).getExpression() instanceof Binary) {
                 rightOkay = binaryOperationIsOkay(((Binary) ((Parenthese) node.getDroite()).getExpression()));
                 okayFlag = true;
-            } else { // C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese
+            
+            } else if ( ((Parenthese) node.getDroite()).getExpression() instanceof Unary){
+                classDroite = getTheClass(((Parenthese) node.getDroite()).getExpression().accept(this));
+                rightOkay = true;
+            }else { // C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese
                      // comme ça: (3)
                 classDroite = getTheClass(((Parenthese) node.getDroite()).getExpression());
                 rightOkay = true;
@@ -63,7 +61,11 @@ public class AnalyseurSementique implements ASTVisitor {
             if (((Parenthese) node.getGauche()).getExpression() instanceof Binary) {
                 leftOkay = binaryOperationIsOkay(((Binary) ((Parenthese) node.getGauche()).getExpression()));
                 okayFlag = true;
-            } else { // C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese
+            } else if ( ((Parenthese) node.getGauche()).getExpression() instanceof Unary){
+                classGauche = getTheClass(((Parenthese) node.getGauche()).getExpression().accept(this));
+                System.out.println(classGauche);
+                leftOkay = true;
+            }else { // C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese
                      // comme ça: (3)
                 classGauche = getTheClass(((Parenthese) node.getGauche()).getExpression());
                 leftOkay = true;
@@ -102,7 +104,6 @@ public class AnalyseurSementique implements ASTVisitor {
         }
         // Dst est forcéement un Idf, par contre src peut être binaire, ou oper.
         if (src instanceof Binary) {
-
             Class<?> srcClass = getTheClass(((Binary) src));
             if (srcClass != null && srcClass != dstClass) {
                 throw new RuntimeException("Affectation illégale à la ligne : " + node.getLine());
@@ -156,7 +157,7 @@ public class AnalyseurSementique implements ASTVisitor {
 
         // On n'est plus dans les déclarations, du coup on peut intérdire
         // maintenant les affectations aux constantes
-        this.positionBloc = true;
+        this.positionBloc = !this.positionBloc;
         node.getInstructions().accept(this);
         return node;
     }
@@ -228,7 +229,7 @@ public class AnalyseurSementique implements ASTVisitor {
             throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
         }
         node.getExpression().accept(this);
-        return node;
+        return node.getExpression();
     }
 
     public Object visit(Plus node) {
@@ -279,7 +280,6 @@ public class AnalyseurSementique implements ASTVisitor {
         if (!binaryOperationIsOkay(node)) {
             throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
         }
-
         return node;
     }
 
@@ -287,7 +287,6 @@ public class AnalyseurSementique implements ASTVisitor {
         if (!binaryOperationIsOkay(node)) {
             throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
         }
-
         return node;
     }
 
@@ -316,7 +315,7 @@ public class AnalyseurSementique implements ASTVisitor {
             throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
         }
         node.getExpression().accept(this);
-        return node;
+        return node.getExpression();
     }
 
     public Object visit(Vrai node) {

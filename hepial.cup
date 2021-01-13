@@ -154,7 +154,7 @@ instr             ::= assign:inst        {: RESULT = inst;  :}
                       | while_instr:inst {:  RESULT = inst;  :}
                       | for_instr:inst   {:  RESULT = inst;  :};
 
-assign            ::= access:a EQUAL:e expr:expr SEMICOLON:s {: RESULT = new Assignment(a, expr, "", sleft, sright); :};
+assign            ::= access:a EQUAL:e expr:expr SEMICOLON:s {: RESULT = new Assignment((Idf)a, expr, "", sleft, sright); :};
 
 
 write_instr       ::= WRITE expr:e SEMICOLON:s {: RESULT = new Ecrire(e, "", sleft, sright); :}

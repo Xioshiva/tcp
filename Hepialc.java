@@ -1,7 +1,7 @@
 import java.util.Vector;
-import java.io.FileReader;
 import java_cup.runtime.Symbol;
 import java.util.HashMap;
+import java.io.*;
 
 public class Hepialc {
     public static void main(String[] arg) {
@@ -24,6 +24,16 @@ public class Hepialc {
                 //Gen de code
                 GenerateurDeCode gdc = new GenerateurDeCode(TDS, constantOrNot);
                 program.accept(gdc);
+                
+                File fichier = new File("test.j");
+                FileOutputStream outputStream = new FileOutputStream(fichier, true);
+        
+                PrintWriter pW = new PrintWriter("test.j");
+                pW.println(gdc.code());
+                pW.close();
+                
+                
+                
                 System.out.println("Jasmin code generated!");
                 
                 try {

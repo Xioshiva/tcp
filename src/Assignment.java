@@ -10,12 +10,12 @@ public class Assignment extends Instruction {
     /**
      * The destination variable or array (at its left)
      */
-    protected Expression destination;
+    protected Idf destination;
 
     /**
      * Constructor
      */
-    public Assignment(Expression dest, Expression src, String fl, int line, int col) {
+    public Assignment(Idf dest, Expression src, String fl, int line, int col) {
         super(fl, line, col);
         this.lierSource(src);
         this.lierDestination(dest);
@@ -30,7 +30,7 @@ public class Assignment extends Instruction {
     /**
      * Get the destination variable or array (at its left)
      */
-    public Expression getDestination() {
+    public Idf getDestination() {
         return this.destination;
     }
 
@@ -43,7 +43,7 @@ public class Assignment extends Instruction {
     /**
      * Set the destination variable or array (at its left)
      */
-    public void lierDestination(Expression exp) {
+    public void lierDestination(Idf exp) {
         this.destination = exp;
     }
 

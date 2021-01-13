@@ -14,7 +14,7 @@ public class Ecrire extends Instruction{
         this.expr = expr;
     }
     
-    public String getString(){
+    public String getValeur(){
         return this.val;
     }
 
