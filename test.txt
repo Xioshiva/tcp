@@ -1,10 +1,14 @@
 programme SecondTest
 entier n;
-booleen result ;
+booleen result;
+entier m;
 debutprg
+	m = 0;
 	n = 3;
 	result = vrai ;
-	pour n allantde 0 a 8 faire
-		ecrire n;
-	finpour
+	ecrire n;
+	ecrire "";
+	ecrire "n ?";
+	lire n;
+	ecrire n;
 finprg

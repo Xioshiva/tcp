@@ -12,9 +12,9 @@ public class Plus extends Unary{
     public String toString(){
         return "Plus: \n";
     }
-
     
     Object accept(ASTVisitor visitor){
+        System.out.println("lol");
         return visitor.visit(this);
     }
 }

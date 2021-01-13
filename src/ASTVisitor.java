@@ -27,6 +27,7 @@ public interface ASTVisitor {
     Object visit(Non node);
     Object visit(Ou node);
     Object visit(Parenthese node);
+    Object visit(Plus node);
     Object visit(Pour node);
     Object visit(Multiplication node);
     Object visit(Soustraction node);

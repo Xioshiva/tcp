@@ -16,14 +16,14 @@ public class GenerateurDeCode implements ASTVisitor {
 
     private int labelIndex = 0;
 
-
-    public String code(){
+    public String code() {
         return this.tgtCode;
     }
 
-    //Complète le if_cmpXX en ajoutant les labels et goto -> Pas très efficace dans le cas des conditions, 
-    //mais bien plus facile à mettre en oueuvre
-    public void remplirCondition(){
+    // Complète le if_cmpXX en ajoutant les labels et goto -> Pas très efficace dans
+    // le cas des conditions,
+    // mais bien plus facile à mettre en oueuvre
+    public void remplirCondition() {
         int tmp = this.labelIndex;
         this.tgtCode += "label_" + tmp + "\n";
         this.labelIndex++;
@@ -34,8 +34,6 @@ public class GenerateurDeCode implements ASTVisitor {
         this.tgtCode += "label_" + labelIndex + ":\n";
         this.labelIndex++;
     }
-
-
 
     // A chaque fois qu'il faut manipuler une variable,
     // Il faut vérifier son index; et si l'index est -1;
@@ -64,25 +62,28 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(Assignment node) {
+        if (node.getSource() instanceof Plus) {
+            node.getDestination().accept(this);
+        }
         node.getSource().accept(this);
-        this.tgtCode += "istore " + indexVariable(node.getDestination().getNom()) + "\n";
 
+        this.tgtCode += "istore " + indexVariable(node.getDestination().getNom()) + "\n";
         return node;
     }
 
     public Object visit(Block node) {
         node.getInstructions().forEach(i -> i.accept(this));
         return node;
-    } 
+    }
 
     public Object visit(SiAlors node) {
         node.getExpr().accept(this);
 
         int indexTemporaire = this.labelIndex;
-        this.tgtCode +="ifeq label_" + indexTemporaire + "\n";
-        this.labelIndex+=1;
+        this.tgtCode += "ifeq label_" + indexTemporaire + "\n";
+        this.labelIndex += 1;
         node.getInstr().forEach(i -> i.accept(this));
-        this.tgtCode +="label_" + indexTemporaire + ":\n"; 
+        this.tgtCode += "label_" + indexTemporaire + ":\n";
 
         return node;
     }
@@ -90,19 +91,18 @@ public class GenerateurDeCode implements ASTVisitor {
     public Object visit(SiAlorsSinon node) {
         node.getExpr().accept(this);
 
-
-        //If Then
+        // If Then
         int indexTemporaire = this.labelIndex;
-        this.tgtCode +="ifeq label_" + indexTemporaire + "\n";
-        this.labelIndex+=1;
+        this.tgtCode += "ifeq label_" + indexTemporaire + "\n";
+        this.labelIndex += 1;
         node.getInstr().forEach(i -> i.accept(this));
         int indexTemp2 = this.labelIndex;
-        this.tgtCode +="goto label_" + indexTemp2 + "\n"; 
-        
-        //Else
-        this.tgtCode +="label_" + indexTemporaire + ":\n"; 
+        this.tgtCode += "goto label_" + indexTemp2 + "\n";
+
+        // Else
+        this.tgtCode += "label_" + indexTemporaire + ":\n";
         node.getInstr2().forEach(i -> i.accept(this));
-        this.tgtCode +="label_" + indexTemp2 + ":\n"; 
+        this.tgtCode += "label_" + indexTemp2 + ":\n";
 
         return node;
     }
@@ -118,10 +118,9 @@ public class GenerateurDeCode implements ASTVisitor {
         }
         if (clas == Nombre.class) {
             this.tgtCode += " I\n";
-        } else if (clas == Vrai.class || clas == Faux.class ) {
+        } else if (clas == Vrai.class || clas == Faux.class) {
             this.tgtCode += " Z\n";
         } else {
-            System.out.println(clas);
             throw new RuntimeException("Type inconnu à la ligne: " + node.getLine());
         }
     }
@@ -150,9 +149,6 @@ public class GenerateurDeCode implements ASTVisitor {
         this.tgtCode += ".limit stack 20000\n";
         this.tgtCode += ".limit locals 100\n";
 
-
-
-
         node.getDeclaration().accept(this);
         // On n'est plus dans les déclarations, du coup on peut intérdire
         // maintenant les affectations aux constantes
@@ -180,15 +176,15 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(Ecrire node) {
-        if(node.getValeur() != null){
-            this.tgtCode +="getstatic java/lang/System/out Ljava/io/PrintStream;\n";
-            this.tgtCode += "ldc " + node.getValeur() +"\n";
-            this.tgtCode +="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n";
-        }else{
+        if (node.getValeur() != null) {
+            this.tgtCode += "getstatic java/lang/System/out Ljava/io/PrintStream;\n";
+            this.tgtCode += "ldc " + node.getValeur() + "\n";
+            this.tgtCode += "invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n";
+        } else {
             node.getExpr().accept(this);
-            this.tgtCode +="getstatic java/lang/System/out Ljava/io/PrintStream;\n";
-            this.tgtCode +="swap\n";
-            this.tgtCode +="invokevirtual java/io/PrintStream/print(I)V\n";
+            this.tgtCode += "getstatic java/lang/System/out Ljava/io/PrintStream;\n";
+            this.tgtCode += "swap\n";
+            this.tgtCode += "invokevirtual java/io/PrintStream/print(I)V\n";
         }
         return node;
     }
@@ -213,11 +209,10 @@ public class GenerateurDeCode implements ASTVisitor {
         return node;
     }
 
-
-    //On utilise ça seulement dans le cas ou le Idf est "à droite" du égal
-    //Que pour les iload
+    // On utilise ça seulement dans le cas ou le Idf est "à droite" du égal
+    // Que pour les iload
     public Object visit(Idf node) {
-        this.tgtCode += "iload " + indexVariable(node.getNom()) + "\n"; 
+        this.tgtCode += "iload " + indexVariable(node.getNom()) + "\n";
         return node;
     }
 
@@ -238,6 +233,12 @@ public class GenerateurDeCode implements ASTVisitor {
     }
 
     public Object visit(Lire node) {
+        this.tgtCode += "new java/util/Scanner\n";
+        this.tgtCode += "dup\n";
+        this.tgtCode += "getstatic java/lang/System/in Ljava/io/InputStream;\n";
+        this.tgtCode += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V\n";
+        this.tgtCode += "invokevirtual java/util/Scanner/nextInt()I\n";
+        this.tgtCode += "istore " + indexVariable(node.getIdf().getNom()) + "\n";
         return node;
     }
 
@@ -260,16 +261,15 @@ public class GenerateurDeCode implements ASTVisitor {
 
     public Object visit(Non node) {
 
-        //On met la valeur de notre Expression en haut de la pile
+        // On met la valeur de notre Expression en haut de la pile
         node.getExpression().accept(this);
-        
+
         int tmp = this.labelIndex;
         this.labelIndex++;
 
         this.tgtCode += "ifeq label_" + tmp + "\n";
         this.tgtCode += "ldc 0\n";
-        this.tgtCode += "goto label_" + this.labelIndex +"\n";
-
+        this.tgtCode += "goto label_" + this.labelIndex + "\n";
 
         tgtCode += "label_" + tmp + ":\n";
         this.tgtCode += "ldc 1\n";
@@ -277,14 +277,13 @@ public class GenerateurDeCode implements ASTVisitor {
         this.tgtCode += "label_" + this.labelIndex + ":\n";
         this.labelIndex++;
 
-
         return node;
     }
 
     public Object visit(Ou node) {
         node.getGauche().accept(this);
         node.getDroite().accept(this);
-        this.tgtCode +="ior\n";
+        this.tgtCode += "ior\n";
         return node;
     }
 
@@ -296,14 +295,14 @@ public class GenerateurDeCode implements ASTVisitor {
     public Object visit(Pour node) {
         node.getBorneInf().accept(this);
 
-        this.tgtCode += "istore " + indexVariable(node.getIdf().getNom())+"\n"; 
+        this.tgtCode += "istore " + indexVariable(node.getIdf().getNom()) + "\n";
 
         int tmp = this.labelIndex;
         this.labelIndex++;
         int tmp2 = this.labelIndex;
         this.labelIndex++;
 
-        this.tgtCode +="label_" + tmp +":\n";
+        this.tgtCode += "label_" + tmp + ":\n";
         node.getBorneSup().accept(this);
         node.getIdf().accept(this);
 
@@ -314,9 +313,9 @@ public class GenerateurDeCode implements ASTVisitor {
         node.getIdf().accept(this);
         this.tgtCode += "ldc 1\n";
         this.tgtCode += "iadd\n";
-        this.tgtCode += "istore " + indexVariable(node.getIdf().getNom())+"\n"; 
-        this.tgtCode += "goto label_" + tmp +"\n";
-        this.tgtCode +="label_" + tmp2 +":\n";
+        this.tgtCode += "istore " + indexVariable(node.getIdf().getNom()) + "\n";
+        this.tgtCode += "goto label_" + tmp + "\n";
+        this.tgtCode += "label_" + tmp2 + ":\n";
 
         return node;
     }
@@ -354,17 +353,17 @@ public class GenerateurDeCode implements ASTVisitor {
     public Object visit(TantQue node) {
         int tmp = this.labelIndex;
         this.labelIndex++;
-        this.tgtCode += "label_"+tmp+":\n";
+        this.tgtCode += "label_" + tmp + ":\n";
         node.getExpr().accept(this);
 
         int tmp2 = this.labelIndex;
         this.labelIndex++;
 
-        this.tgtCode += "ifeq label_"+ tmp2 +"\n";
+        this.tgtCode += "ifeq label_" + tmp2 + "\n";
 
         node.getInstr().forEach(i -> i.accept(this));
-        this.tgtCode += "goto label_"+ tmp +"\n";
-        this.tgtCode += "label_"+tmp2+":\n";
+        this.tgtCode += "goto label_" + tmp + "\n";
+        this.tgtCode += "label_" + tmp2 + ":\n";
         return node;
     }
 

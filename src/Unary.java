@@ -1,5 +1,5 @@
 public abstract class Unary extends Expression{
-    private Expression expr;
+    protected Expression expr;
 
     public Unary(String fl, int line, int col) {
         super(fl, line, col);
@@ -18,5 +18,4 @@ public abstract class Unary extends Expression{
         return "Unary: " + this.expr.toString() + "\n";
     }
 
-    abstract Object accept(ASTVisitor visitor);
 }

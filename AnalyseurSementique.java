@@ -63,7 +63,6 @@ public class AnalyseurSementique implements ASTVisitor {
                 okayFlag = true;
             } else if ( ((Parenthese) node.getGauche()).getExpression() instanceof Unary){
                 classGauche = getTheClass(((Parenthese) node.getGauche()).getExpression().accept(this));
-                System.out.println(classGauche);
                 leftOkay = true;
             }else { // C'est à dire qu'on a juste mit un nombre ou un boolean dans la parenthese
                      // comme ça: (3)
@@ -80,8 +79,6 @@ public class AnalyseurSementique implements ASTVisitor {
 
     public Object visit(Addition node) {
         if (!binaryOperationIsOkay(node)) {
-            // System.out.println(node.getGauche().accept(this).toString() + " + " +
-            // node.getDroite().accept(this).toString());
             throw new RuntimeException("Opération entre deux types différents à la ligne: " + node.getLine());
         }
 
@@ -178,6 +175,9 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Ecrire node) {
+        //Si on imprime une expr.
+        if(node.getExpr() != null)
+            node.getExpr().accept(this);
         return node;
     }
 
@@ -221,6 +221,7 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Lire node) {
+        node.getIdf().accept(this);
         return node;
     }
 
@@ -233,7 +234,7 @@ public class AnalyseurSementique implements ASTVisitor {
     }
 
     public Object visit(Plus node) {
-        if (getTheClass(node.getExpression()) != Nombre.class) {
+        if (getTheClass(node.getExpression().accept(this)) != Nombre.class) {
             throw new RuntimeException("Opération illégale à la ligne: " + node.getLine());
         }
         node.getExpression().accept(this);
