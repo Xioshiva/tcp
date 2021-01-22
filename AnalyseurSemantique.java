@@ -1,6 +1,6 @@
 import java.util.Map;
 
-public class AnalyseurSementique implements ASTVisitor {
+public class AnalyseurSemantique implements ASTVisitor {
 
     private Map<String, Object> TDS;
     private Map<String, Boolean> constantOrNot;
@@ -8,7 +8,7 @@ public class AnalyseurSementique implements ASTVisitor {
     // Pour distinguer de si oui ou non on se trouve dans le bloc des declaration
     private boolean positionBloc = false;
 
-    public AnalyseurSementique(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
+    public AnalyseurSemantique(Map<String, Object> TDS, Map<String, Boolean> constantOrNot) {
         this.TDS = TDS;
         this.constantOrNot = constantOrNot;
     }

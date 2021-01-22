@@ -14,9 +14,9 @@ action code {:
 :}
 
 
-terminal PRG, STARTPRG, ENDPRG, SEMICOLON, /*STARTFUNC, ENDFUNC,*/ OPENPARENT;
-terminal CLOSEPARENT, COMMA, EQUAL; /*DOUBLEPOINTS, OPENBRACK, CLOSEBRACK;*/
-terminal READ, WRITE, /*RETURN,*/ IF, THEN, ELSE, ENDIF, WHILE, DO, ENDWHILE;
+terminal PRG, STARTPRG, ENDPRG, SEMICOLON, OPENPARENT;
+terminal CLOSEPARENT, COMMA, EQUAL; 
+terminal READ, WRITE, IF, THEN, ELSE, ENDIF, WHILE, DO, ENDWHILE;
 terminal FOR, FROM, TO, ENDFOR, TRUE, FALSE,  PLUS, MINUS, TIMES, DIVIDE;
 terminal EQUALS, DIFF, INF, INFEQUAL, SUP, SUPEQUAL, AND, OR, TILDA, NOT;
 
@@ -30,7 +30,8 @@ non terminal ArrayList<Instruction> instr_lst, declars;
 non terminal Instruction declar;
 non terminal DeclarVar declar_var;
 non terminal DeclarConst declar_const;
-non terminal Expression expr, access, operand;
+non terminal Expression expr, operand;
+non terminal Idf access;
 non terminal Instruction for_instr;
 non terminal Instruction while_instr;
 //non terminal Instruction return_instr;
@@ -61,7 +62,7 @@ program           ::= header:f declar_lst:d STARTPRG body:instructions ENDPRG
                       RESULT = f;
                     :};
 
-header            ::= PRG IDENT:id {: RESULT = new ProgramDeclaration( new Idf(id, "", idleft, idright), "", idleft, idright, null, null , TDS, constantOrNot); :};
+header            ::= PRG:p IDENT:id {: RESULT = new ProgramDeclaration( new Idf(id, "", idleft, idright), "", pleft, pright, null, null , TDS, constantOrNot); :};
 
 declar_lst        ::=  declars:d {: RESULT = new Block(d, "", dleft, dright); :};
 
@@ -72,14 +73,14 @@ declars           ::= {: RESULT = new ArrayList(); :}
 declar            ::= declar_var:dv {: RESULT = dv; :}
                       | declar_const:dc {: RESULT = dc; :};
 
-declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVar(l, "", sleft, sright);
+declar_var        ::= type:t l_ident:l SEMICOLON:s   {: RESULT = new DeclarVar(l, "", tleft, tright);
                                                         
                                                         for( Idf idf : l){
                                                           TDS.put(idf.getNom(), (t.equals("integer") ? new Nombre(0,"",0,0) : new Vrai("",0,0)));
                                                           constantOrNot.put(idf.getNom(), false);
                                                         }:};
 
-declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {:RESULT = new DeclarConst(new Idf(i, "", ileft, iright), ex, "", sright, sleft); 
+declar_const      ::= CONSTANT type:t IDENT:i EQUAL:e expr:ex SEMICOLON:s   {:RESULT = new DeclarConst(new Idf(i, "", ileft, iright), ex, "", eright, eleft); 
                                                                               TDS.put(i, (t.equals("integer") ? new Nombre(0,"",0,0) : new Vrai("",0,0)));
                                                                               constantOrNot.put(i, true);
                                                                               :};
@@ -131,7 +132,7 @@ op_una            ::= TILDA:o      {: RESULT = new Tilda("", oleft, oright);:}
 
                       
 operand           ::= access:access       {: RESULT = access; :}
-                      | INTEGERCONST:ib   {: RESULT = new Nombre(ib, "", ibleft, ibright); :}
+                      | INTEGERCONST:i   {: RESULT = new Nombre(i, "", ileft, iright); :}
                       | TRUE:t           {: RESULT = new Vrai("", tleft, tright); :}
                       | FALSE:f           {:  RESULT = new Faux("", fleft, fright); :};
 
@@ -154,13 +155,13 @@ instr             ::= assign:inst        {: RESULT = inst;  :}
                       | while_instr:inst {:  RESULT = inst;  :}
                       | for_instr:inst   {:  RESULT = inst;  :};
 
-assign            ::= access:a EQUAL:e expr:expr SEMICOLON:s {: RESULT = new Assignment((Idf)a, expr, "", sleft, sright); :};
+assign            ::= access:a EQUAL:e expr:expr SEMICOLON:s {: RESULT = new Assignment(a, expr, "", aleft, aright); :};
 
 
-write_instr       ::= WRITE expr:e SEMICOLON:s {: RESULT = new Ecrire(e, "", sleft, sright); :}
-                      | WRITE STRINGCONST:strcst SEMICOLON:s  {: RESULT = new Ecrire(strcst, "", sleft, sright);  :};
+write_instr       ::= WRITE expr:e SEMICOLON:s {: RESULT = new Ecrire(e, "", eleft, eright); :}
+                      | WRITE STRINGCONST:strcst SEMICOLON:s  {: RESULT = new Ecrire(strcst, "", strcstleft, strcstright);  :};
 
-read_instr        ::= READ IDENT:i SEMICOLON:s   {: RESULT = new Lire(new Idf(i, "", ileft, iright), "", sleft, sright);  :};
+read_instr        ::= READ IDENT:i SEMICOLON:s   {: RESULT = new Lire(new Idf(i, "", ileft, iright), "", ileft, iright);  :};
 
 
 cond_instr        ::= IF:o expr:e THEN body:b ELSE body:b2 ENDIF {: RESULT = new SiAlorsSinon(e, b.getInstructions(), b2.getInstructions(), "", oleft, oright);:}

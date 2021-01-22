@@ -318,7 +318,7 @@ public class GenerateurDeCode implements ASTVisitor {
     public Object visit(Multiplication node) {
         node.getGauche().accept(this);
         node.getDroite().accept(this);
-        this.tgtCode += "imult\n";
+        this.tgtCode += "imul\n";
         return node;
     }
 

@@ -37,12 +37,12 @@ class HepialLexer implements java_cup.runtime.Scanner {
   private static final String ZZ_CMAP_PACKED = 
     "\11\0\1\14\1\13\1\13\1\13\1\13\22\0\1\14\1\0\1\3"+
     "\5\0\1\7\1\10\1\43\1\41\1\4\1\42\1\0\1\12\12\2"+
-    "\1\0\1\5\1\44\1\6\1\45\2\0\32\1\1\0\1\0\1\0"+
-    "\3\0\1\21\1\25\1\33\1\24\1\23\1\30\1\20\1\1\1\31"+
-    "\2\1\1\35\1\22\1\32\1\17\1\15\1\36\1\16\1\34\1\27"+
-    "\1\26\1\37\1\1\1\40\2\1\1\0\1\14\1\0\1\11\6\0"+
-    "\1\13\32\0\1\14\u15df\0\1\14\u097f\0\13\14\35\0\1\13\1\13"+
-    "\5\0\1\14\57\0\1\14\u0fa0\0\1\14\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\ud00f\0";
+    "\1\0\1\5\1\44\1\6\1\45\2\0\32\1\6\0\1\21\1\25"+
+    "\1\33\1\24\1\23\1\30\1\20\1\1\1\31\2\1\1\35\1\22"+
+    "\1\32\1\17\1\15\1\36\1\16\1\34\1\27\1\26\1\37\1\1"+
+    "\1\40\2\1\1\0\1\14\1\0\1\11\6\0\1\13\32\0\1\14"+
+    "\u15df\0\1\14\u097f\0\13\14\35\0\1\13\1\13\5\0\1\14\57\0"+
+    "\1\14\u0fa0\0\1\14\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\ud00f\0";
 
   /** 
    * Translates characters to character classes
@@ -357,7 +357,7 @@ public void yyerror() {
     char [] map = new char[0x110000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 186) {
+    while (i < 180) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);

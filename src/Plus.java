@@ -14,7 +14,6 @@ public class Plus extends Unary{
     }
     
     Object accept(ASTVisitor visitor){
-        System.out.println("lol");
         return visitor.visit(this);
     }
 }

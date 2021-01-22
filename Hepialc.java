@@ -18,7 +18,7 @@ public class Hepialc {
                 System.out.println("Syntax looking good!");
 
                 //Sémentique
-                AnalyseurSementique as = new AnalyseurSementique(TDS, constantOrNot);
+                AnalyseurSemantique as = new AnalyseurSemantique(TDS, constantOrNot);
                 program.accept(as);
                 System.out.println("Sematincs looking good!");
                 //Gen de code

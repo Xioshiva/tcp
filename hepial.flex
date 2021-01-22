@@ -28,9 +28,6 @@ semicolon = ;
 equal = "="
 openparent = "("
 closeparent = ")"
-openbrack = "["
-closebrack = "]"
-doublepoints = ".."
 tilda = "~"
 
 // ignored
@@ -45,15 +42,10 @@ debutprg        { return new Symbol(sym.STARTPRG, yyline, yycolumn); }
 finprg          { return new Symbol(sym.ENDPRG, yyline, yycolumn); }
 constante       { return new Symbol(sym.CONSTANT, yyline, yycolumn); }
 {semicolon}     { return new Symbol(sym.SEMICOLON, yyline, yycolumn); }
-//debutfonc       { return new Symbol(sym.STARTFUNC, yyline, yycolumn); }
-//finfonc         { return new Symbol(sym.ENDFUNC, yyline, yycolumn); }
 {openparent}    { return new Symbol(sym.OPENPARENT, yyline, yycolumn); }
 {closeparent}   { return new Symbol(sym.CLOSEPARENT, yyline, yycolumn); }
 {comma}         { return new Symbol(sym.COMMA, yyline, yycolumn); }
 {equal}         { return new Symbol(sym.EQUAL, yyline, yycolumn); }
-//{doublepoints}  { return new Symbol(sym.DOUBLEPOINTS, yyline, yycolumn); }
-//{openbrack}     { return new Symbol(sym.OPENBRACK, yyline, yycolumn); }
-//{closebrack}    { return new Symbol(sym.CLOSEBRACK, yyline, yycolumn); }
 
 {constantInt}   { return new Symbol(sym.INTEGERCONST, yyline, yycolumn, Integer.parseInt(yytext())); }
 {constanteStr}  { return new Symbol(sym.STRINGCONST, yyline, yycolumn, yytext()); }
